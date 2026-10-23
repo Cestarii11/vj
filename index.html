@@ -1,0 +1,2086 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>V&amp;J</title>
+    <meta name="description" content="Un pequeño espacio hecho para ti">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#FFF1D7">
+
+    <!-- PWA / iPhone (Safari → Compartir → Añadir a pantalla de inicio) -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="V&amp;J">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <!-- Tipografías del diseño: Cormorant Garamond (títulos) + Manrope (cuerpo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&display=swap">
+    <link rel="preload" as="image" href="img/logo.jpg">
+
+    <style>
+        /* =========================================================
+   V&J · Pantalla 1: Inicio
+   Valores tomados del archivo de Figma Make (index.css).
+   Donde se cambió algo por legibilidad en iPhone, el valor
+   original del Figma queda anotado en un comentario "figma: Npx"
+   al final de esa misma línea.
+   ========================================================= */
+
+        /* ---------- Tokens ---------- */
+        :root {
+            --canvas: #FFF1D7;
+            --rose: #EBD8D2;
+            --lilac: #CBB6C7;
+            --accent: #7F6C8C;
+            --ink: #3B1F3B;
+            --olive: #7C6A3F;
+            --letter: #2F2A33;
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* ---------- Base ---------- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body,
+        h1,
+        h2,
+        h3,
+        p,
+        figure {
+            margin: 0;
+        }
+
+        body {
+            background: var(--canvas);
+            color: var(--ink);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body:has(dialog[open]) {
+            overflow: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img,
+        svg {
+            display: block;
+            max-width: 100%;
+        }
+
+        svg {
+            flex-shrink: 0;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+            color: inherit;
+            margin: 0;
+        }
+
+        button {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            cursor: pointer;
+            text-align: inherit;
+            transition: background .2s, transform .2s, box-shadow .2s;
+        }
+
+        button:active,
+        a.pressable:active {
+            transform: scale(.98);
+        }
+
+        button:disabled {
+            cursor: not-allowed;
+            opacity: .45;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 5px;
+        }
+
+        h1,
+        h2 {
+            font-family: var(--font-display);
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 56px;
+            line-height: 1.07;
+            letter-spacing: -1.8px;
+        }
+
+        h2 {
+            font-size: 30px;
+            line-height: 1.15;
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        p {
+            line-height: 1.8;
+        }
+
+        i {
+            font-style: italic;
+        }
+
+        ::selection {
+            background: var(--lilac);
+            color: var(--ink);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        /* Iconos (sprite SVG, trazo redondeado de 1.5 px como en el Figma) */
+        .i {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ---------- Estructura general ---------- */
+        .app {
+            min-height: 100dvh;
+        }
+
+        .sidebar {
+            width: 230px;
+            position: fixed;
+            inset: 0 auto 0 0;
+            padding: 43px 25px 28px;
+            border-right: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            background: color-mix(in srgb, var(--rose) 24%, var(--canvas));
+        }
+
+        .wordmark {
+            display: block;
+            font-family: var(--font-display);
+            font-size: 53px;
+            padding-left: 17px;
+            line-height: 1;
+            letter-spacing: -5px;
+        }
+
+        .wordmark span {
+            font-style: italic;
+            font-size: 44px;
+            padding: 0 3px;
+        }
+
+        .wordmark small {
+            display: block;
+            font-family: var(--font-sans);
+            font-size: 8px;
+            letter-spacing: 2px;
+            margin-top: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .sidebar-note {
+            font-size: 13px;
+            line-height: 1.9;
+            margin: 43px 0 33px 17px;
+            color: var(--accent);
+        }
+
+        .sidebar-note i {
+            font-family: var(--font-display);
+            font-size: 22px;
+            color: var(--ink);
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            height: 51px;
+            padding: 0 18px;
+            border-radius: 13px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            transition: background .2s;
+        }
+
+        .nav-item:hover {
+            background: color-mix(in srgb, var(--rose) 60%, transparent);
+        }
+
+        .nav-item[aria-current="page"] {
+            color: var(--ink);
+            background: var(--rose);
+        }
+
+        .nav-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--ink);
+            margin-left: auto;
+            display: none;
+        }
+
+        .nav-item[aria-current="page"] .nav-dot {
+            display: block;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 40px 17px 0;
+            color: var(--accent);
+        }
+
+        .sidebar-bottom p {
+            font-size: 11px;
+            margin: 16px 0 28px;
+        }
+
+        .sidebar-bottom>span {
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        /* figma: 8px */
+
+        .workspace {
+            margin-left: 230px;
+        }
+
+        .topbar {
+            height: 91px;
+            padding: 0 5.3%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+        }
+
+        .mobile-brand {
+            display: none;
+        }
+
+        .top-dedication {
+            font-size: 10px;
+            letter-spacing: 2.1px;
+            color: var(--olive);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* figma: 9px */
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        /* figma: 10px */
+        .avatar {
+            position: relative;
+            width: 33px;
+            height: 33px;
+            border-radius: 50%;
+            background: var(--rose);
+            font-family: var(--font-display);
+            font-size: 20px;
+            margin-left: 14px;
+            color: var(--ink);
+            display: grid;
+            place-items: center;
+        }
+
+        .avatar::after {
+            content: "";
+            position: absolute;
+            inset: -8px;
+        }
+
+        /* zona táctil ≥ 44 px */
+
+        .main {
+            max-width: 1240px;
+            padding: 43px 5.3% 100px;
+            margin: auto;
+        }
+
+        .main:focus {
+            outline: none;
+        }
+
+        .page {
+            animation: page-in .18s ease-out both;
+        }
+
+        .page-eyebrow {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.8px;
+            color: var(--olive);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        /* figma: 9px */
+        .tiny-line {
+            display: inline-block;
+            width: 22px;
+            height: 1px;
+            background: var(--olive);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .spread {
+            justify-content: space-between;
+        }
+
+        /* ---------- Inicio ---------- */
+        .home-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0 31px;
+        }
+
+        .home-heading p {
+            font-size: 12px;
+            margin-top: 12px;
+            color: var(--accent);
+        }
+
+        .heading-spark {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            color: var(--accent);
+            vertical-align: top;
+            margin: 4px 0 0 17px;
+            stroke-width: 1.1;
+        }
+
+        .date-stamp {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--olive);
+            transform: rotate(-7deg);
+            padding-right: 8px;
+        }
+
+        .date-stamp span {
+            font-size: 9px;
+            line-height: 1.7;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+
+        /* figma: 8px */
+        .date-stamp b {
+            font-weight: 600;
+        }
+
+        .birthday-card {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            position: relative;
+            overflow: hidden;
+            min-height: 378px;
+            background: color-mix(in srgb, var(--rose) 69%, var(--canvas));
+            border-radius: 24px;
+            border: 1px solid color-mix(in srgb, var(--accent) 9%, transparent);
+        }
+
+        .birthday-copy {
+            padding: 31px 0 27px 35px;
+            z-index: 1;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 11px;
+            border-radius: 30px;
+            background: var(--canvas);
+            color: var(--olive);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .birthday-pill {
+            font-size: 10px;
+            letter-spacing: 1.25px;
+            text-transform: uppercase;
+            background: color-mix(in srgb, var(--canvas) 62%, transparent);
+            padding: 8px 11px;
+        }
+
+        /* figma: 8px */
+        .birthday-copy h2 {
+            font-size: 48px;
+            letter-spacing: -1.1px;
+            line-height: 1;
+            margin: 20px 0 12px;
+        }
+
+        .birthday-copy>p {
+            color: var(--ink);
+            opacity: .72;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        /* figma: 11px */
+        .countdown {
+            display: flex;
+            gap: 9px;
+            margin: 21px 0 17px;
+        }
+
+        .cd-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: color-mix(in srgb, var(--canvas) 60%, transparent);
+            border-radius: 12px;
+            width: 63px;
+            height: 70px;
+        }
+
+        .cd-cell strong {
+            font-family: var(--font-display);
+            font-size: 34px;
+            font-weight: 500;
+            line-height: 1.15;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .cd-cell span {
+            font-size: 10px;
+            letter-spacing: 1.1px;
+            color: var(--olive);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        /* figma: 7px */
+        .cd-cell strong.tick {
+            animation: tick .14s ease-out;
+        }
+
+        .letter-link {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            color: var(--ink);
+            opacity: .8;
+            min-height: 44px;
+        }
+
+        /* figma: 9px */
+        .letter-link:hover {
+            opacity: 1;
+        }
+
+        .letter-link .i {
+            width: 15px;
+            height: 15px;
+        }
+
+        .letter-link .i:last-child {
+            width: 16px;
+            height: 16px;
+        }
+
+        .birthday-art {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            padding: 24px 20px 13px;
+        }
+
+        .logo-frame {
+            width: 222px;
+            height: 232px;
+            border-radius: 115px 115px 18px 18px;
+            overflow: hidden;
+            transform: rotate(5deg);
+            box-shadow: 0 13px 25px color-mix(in srgb, var(--ink) 12%, transparent);
+            border: 6px solid color-mix(in srgb, var(--canvas) 65%, transparent);
+        }
+
+        .logo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .art-star {
+            position: absolute;
+            color: var(--accent);
+            stroke-width: 1.1;
+        }
+
+        .star-one {
+            left: 4px;
+            top: 41px;
+            width: 39px;
+            height: 39px;
+            transform: rotate(-10deg);
+            animation: sparkle 1.8s 2;
+        }
+
+        .star-two {
+            right: 16px;
+            bottom: 81px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .art-caption {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 18px;
+            margin-top: 22px;
+            transform: rotate(-4deg);
+        }
+
+        .handdrawn {
+            width: 160px;
+            height: 22px;
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: .9;
+            opacity: .6;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 32px 0 18px;
+        }
+
+        .section-heading h2 {
+            font-size: 28px;
+            letter-spacing: -.5px;
+        }
+
+        .section-heading>span {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.6px;
+            color: var(--olive);
+            text-transform: uppercase;
+        }
+
+        /* figma: 7px */
+        .shortcut-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .shortcut {
+            display: block;
+            text-align: left;
+            padding: 21px;
+            border-radius: 18px;
+            border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .shortcut:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px color-mix(in srgb, var(--ink) 5%, transparent);
+        }
+
+        .shortcut-0 {
+            background: color-mix(in srgb, var(--lilac) 54%, var(--canvas));
+        }
+
+        .shortcut-1 {
+            background: color-mix(in srgb, var(--rose) 59%, var(--canvas));
+        }
+
+        .shortcut-2 {
+            background: color-mix(in srgb, var(--canvas) 92%, var(--rose));
+        }
+
+        .shortcut-icon {
+            width: 41px;
+            height: 41px;
+            display: grid;
+            place-items: center;
+            border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+            border-radius: 13px;
+        }
+
+        .shortcut-icon .i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .shortcut .row>.i {
+            width: 19px;
+            height: 19px;
+        }
+
+        .shortcut h3 {
+            margin: 18px 0 7px;
+            font-size: 14px;
+        }
+
+        .shortcut p {
+            font-size: 11px;
+            max-width: 150px;
+            opacity: .75;
+            line-height: 1.8;
+        }
+
+        /* figma: 10px */
+        .shortcut-meta {
+            display: block;
+            font-size: 10px;
+            color: var(--olive);
+            margin-top: 22px;
+        }
+
+        /* figma: 8px */
+        .home-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--accent);
+            margin-top: 31px;
+        }
+
+        /* figma: 9px */
+        .home-footer .i {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Encabezado y notas de las demás pantallas (andamio hasta su entrega) */
+        .page-heading {
+            margin-bottom: 30px;
+        }
+
+        .page-heading .heading-row {
+            margin-top: 20px;
+            gap: 25px;
+        }
+
+        .page-heading h1 {
+            font-size: 49px;
+        }
+
+        .page-heading p {
+            font-size: 12px;
+            margin-top: 12px;
+            color: var(--accent);
+        }
+
+        .quiet-note {
+            font-size: 11px;
+            color: var(--olive);
+            margin: 25px 0 10px;
+        }
+
+        /* figma: 10px */
+
+        /* ---------- Botón asistente, navegación inferior, aviso ---------- */
+        .assistant-fab {
+            position: fixed;
+            right: 35px;
+            bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 16px 20px;
+            border-radius: 40px;
+            background: var(--ink);
+            color: var(--canvas);
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 25;
+            /* figma: 11px */
+            box-shadow: 0 6px 24px color-mix(in srgb, var(--ink) 16%, transparent);
+        }
+
+        .assistant-fab:hover {
+            transform: translateY(-3px);
+        }
+
+        .assistant-fab .i {
+            width: 22px;
+            height: 22px;
+        }
+
+        .bottom-nav {
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translate(-50%, 12px);
+            z-index: 100;
+            max-width: 90vw;
+            background: var(--ink);
+            color: var(--canvas);
+            padding: 15px 23px;
+            border: 1px solid var(--accent);
+            border-radius: 16px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px color-mix(in srgb, var(--ink) 20%, transparent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s, transform .2s var(--ease-out);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .toast .i {
+            width: 17px;
+            height: 17px;
+        }
+
+        /* ---------- Hoja (diálogo "sobre tu espacio") ---------- */
+        .sheet {
+            width: min(calc(100% - 48px), 510px);
+            max-height: 85dvh;
+            overflow-y: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 26px;
+            background: var(--canvas);
+            color: var(--ink);
+            box-shadow: 0 20px 80px color-mix(in srgb, var(--ink) 20%, transparent);
+        }
+
+        .sheet::backdrop {
+            background: color-mix(in srgb, var(--ink) 35%, transparent);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .sheet[open] {
+            animation: page-in .25s var(--ease-out);
+        }
+
+        .sheet-inner {
+            padding: 24px 30px 30px;
+        }
+
+        .sheet-handle {
+            display: none;
+        }
+
+        .sheet h2 {
+            font-size: 29px;
+        }
+
+        .sheet-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .sheet-body p {
+            font-size: 13px;
+        }
+
+        .icon-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+        }
+
+        .icon-button:hover {
+            background: color-mix(in srgb, var(--rose) 60%, transparent);
+        }
+
+        .button {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            padding: 12px 20px;
+            background: var(--ink);
+            color: var(--canvas);
+            border-radius: 13px;
+            font-size: 12px;
+            font-weight: 600;
+            /* figma: 11px */
+        }
+
+        .button:hover {
+            background: var(--accent);
+        }
+
+        .button .i {
+            width: 17px;
+            height: 17px;
+        }
+
+        /* ---------- Animaciones ---------- */
+        @keyframes page-in {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes tick {
+            from {
+                opacity: .25;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes sparkle {
+            50% {
+                transform: rotate(2deg) scale(.94);
+            }
+        }
+
+        /* Entrada de Inicio: solo la primera vez de cada sesión (logo → título → contador, 60 ms de desfase) */
+        .intro .rise {
+            animation: rise .42s var(--ease-out) both;
+            animation-delay: calc(var(--n, 0) * 60ms);
+        }
+
+        /* =========================================================
+   Responsive (mismos puntos de corte que el Figma)
+   ========================================================= */
+        @media (min-width: 1500px) {
+            .main {
+                padding-top: 60px;
+            }
+
+            .birthday-card {
+                min-height: 430px;
+            }
+
+            .birthday-copy {
+                padding: 40px;
+            }
+
+            .birthday-copy h2 {
+                font-size: 58px;
+            }
+
+            .logo-frame {
+                width: 260px;
+                height: 270px;
+            }
+
+            .cd-cell {
+                width: 73px;
+                height: 80px;
+            }
+
+            .shortcut {
+                padding: 27px;
+            }
+
+            .shortcut h3 {
+                font-size: 16px;
+            }
+
+            .shortcut p {
+                font-size: 12px;
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 1150px) {
+            .sidebar {
+                width: 195px;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+
+            .workspace {
+                margin-left: 195px;
+            }
+
+            .main {
+                padding-left: 4.5%;
+                padding-right: 4.5%;
+            }
+
+            .logo-frame {
+                width: 184px;
+                height: 199px;
+            }
+
+            .birthday-copy {
+                padding-left: 25px;
+            }
+
+            .birthday-copy h2 {
+                font-size: 43px;
+            }
+
+            .birthday-art {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .star-one {
+                width: 27px;
+                height: 27px;
+                left: 0;
+            }
+
+            .star-two {
+                width: 27px;
+                height: 27px;
+                right: 2px;
+            }
+
+            .art-caption {
+                font-size: 15px;
+            }
+
+            .date-stamp {
+                display: none;
+            }
+
+            .home-heading h1 {
+                font-size: 51px;
+            }
+
+            .shortcut {
+                padding: 17px;
+            }
+
+            .shortcut h3 {
+                font-size: 12px;
+            }
+
+            .shortcut p {
+                font-size: 11px;
+            }
+
+            .shortcut-grid {
+                gap: 12px;
+            }
+
+            .section-heading>span {
+                font-size: 9px;
+            }
+
+            /* figma: 6px */
+            .section-heading h2 {
+                font-size: 25px;
+            }
+
+            .page-heading h1 {
+                font-size: 42px;
+            }
+
+            .page-heading .heading-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .topbar {
+                padding: 0 4.5%;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 165px;
+                padding: 35px 10px 20px;
+            }
+
+            .workspace {
+                margin-left: 165px;
+            }
+
+            .nav-item {
+                gap: 11px;
+                padding: 0 14px;
+                font-size: 12px;
+            }
+
+            .wordmark {
+                padding-left: 14px;
+            }
+
+            .wordmark small {
+                font-size: 8px;
+            }
+
+            /* figma: 6px */
+            .sidebar-note {
+                margin-left: 14px;
+            }
+
+            .sidebar-bottom {
+                padding-left: 14px;
+            }
+
+            .sidebar-bottom>span {
+                letter-spacing: .8px;
+            }
+
+            .top-right>span,
+            .top-right>.i {
+                display: none;
+            }
+
+            .birthday-card {
+                grid-template-columns: 1.2fr .8fr;
+            }
+
+            .logo-frame {
+                width: 145px;
+                height: 159px;
+                border-width: 4px;
+            }
+
+            .birthday-copy {
+                padding-left: 20px;
+            }
+
+            .birthday-copy h2 {
+                font-size: 39px;
+            }
+
+            .birthday-copy>p {
+                font-size: 11px;
+            }
+
+            /* figma: 10px */
+            .countdown {
+                gap: 5px;
+            }
+
+            .cd-cell {
+                width: 49px;
+                height: 62px;
+            }
+
+            .cd-cell strong {
+                font-size: 29px;
+            }
+
+            .letter-link {
+                font-size: 10px;
+                gap: 5px;
+            }
+
+            /* figma: 8px */
+            .letter-link .i:last-child {
+                display: none;
+            }
+
+            .art-caption {
+                font-size: 13px;
+                text-align: center;
+            }
+
+            /* figma: 12px */
+            .handdrawn {
+                width: 120px;
+            }
+
+            .shortcut-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .shortcut {
+                display: grid;
+                grid-template-columns: 45px 1fr;
+                column-gap: 18px;
+                padding: 18px;
+            }
+
+            .shortcut>.row {
+                grid-row: 1 / 4;
+            }
+
+            .shortcut>.row>.i {
+                display: none;
+            }
+
+            .shortcut h3 {
+                font-size: 14px;
+                margin: 0 0 3px;
+            }
+
+            .shortcut p {
+                max-width: none;
+                font-size: 11px;
+            }
+
+            .shortcut-meta {
+                margin-top: 7px;
+            }
+
+            .section-heading>span {
+                display: none;
+            }
+
+            .home-footer {
+                font-size: 10px;
+            }
+
+            /* figma: 8px */
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                display: none;
+            }
+
+            .workspace {
+                margin-left: 0;
+            }
+
+            .topbar {
+                height: calc(74px + var(--safe-top));
+                padding: var(--safe-top) 24px 0;
+            }
+
+            .mobile-brand {
+                display: block;
+                font-family: var(--font-display);
+                font-size: 32px;
+                font-weight: 600;
+                letter-spacing: -2px;
+            }
+
+            .top-dedication {
+                font-size: 9px;
+                letter-spacing: 1px;
+                margin-left: auto;
+                text-align: right;
+                line-height: 1.5;
+            }
+
+            /* figma: 7px */
+            .avatar {
+                margin-left: 17px;
+                width: 29px;
+                height: 29px;
+                font-size: 18px;
+            }
+
+            .main {
+                padding: 29px 24px calc(150px + var(--safe-bottom));
+                max-width: 480px;
+            }
+
+            .page-eyebrow {
+                font-size: 10px;
+                letter-spacing: 1.5px;
+            }
+
+            /* figma: 7px */
+            .home-heading {
+                margin: 16px 0 27px;
+            }
+
+            .home-heading h1 {
+                font-size: 44px;
+                letter-spacing: -1.5px;
+            }
+
+            .heading-spark {
+                width: 23px;
+                height: 23px;
+                margin: 3px 0 0 7px;
+            }
+
+            .home-heading p {
+                font-size: 12px;
+                margin-top: 10px;
+                max-width: 270px;
+            }
+
+            /* figma: 10px */
+            .birthday-card {
+                display: flex;
+                flex-direction: column;
+                border-radius: 23px;
+                min-height: 0;
+            }
+
+            .birthday-copy {
+                padding: 25px 24px 23px;
+                text-align: center;
+                order: 2;
+            }
+
+            .birthday-art {
+                padding: 29px 25px 0;
+                order: 1;
+            }
+
+            .logo-frame {
+                width: 168px;
+                height: 177px;
+                border-radius: 90px 90px 14px 14px;
+                transform: rotate(4deg);
+                border-width: 6px;
+            }
+
+            .art-caption,
+            .handdrawn {
+                display: none;
+            }
+
+            .star-one {
+                top: 39px;
+                left: calc(50% - 133px);
+                width: 30px;
+                height: 30px;
+            }
+
+            .star-two {
+                right: calc(50% - 130px);
+                bottom: 18px;
+                width: 27px;
+                height: 27px;
+            }
+
+            .birthday-pill {
+                font-size: 10px;
+            }
+
+            /* figma: 7px */
+            .birthday-copy h2 {
+                font-size: 42px;
+                margin: 18px 0 13px;
+            }
+
+            .birthday-copy h2 br {
+                display: none;
+            }
+
+            .birthday-copy>p {
+                font-size: 12px;
+            }
+
+            /* figma: 11px */
+            .countdown {
+                justify-content: center;
+                gap: 8px;
+                margin: 22px 0 14px;
+            }
+
+            .cd-cell {
+                width: 59px;
+                height: 68px;
+            }
+
+            .cd-cell strong {
+                font-size: 33px;
+            }
+
+            .letter-link {
+                justify-content: center;
+                width: 100%;
+                font-size: 11px;
+            }
+
+            /* figma: 8px */
+            .letter-link .i:last-child {
+                display: block;
+            }
+
+            .section-heading {
+                margin: 29px 0 17px;
+            }
+
+            .section-heading h2 {
+                font-size: 25px;
+            }
+
+            .shortcut-grid {
+                gap: 12px;
+            }
+
+            .shortcut {
+                border-radius: 17px;
+                padding: 20px;
+            }
+
+            .shortcut h3 {
+                font-size: 14px;
+            }
+
+            .shortcut p {
+                font-size: 12px;
+            }
+
+            /* figma: 10px */
+            .home-footer {
+                font-size: 11px;
+                line-height: 1.8;
+                text-align: center;
+                padding: 0 12px;
+                margin-top: 24px;
+            }
+
+            /* figma: 9px */
+            .home-footer .i {
+                flex-shrink: 0;
+            }
+
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 30;
+                justify-content: space-around;
+                height: calc(75px + var(--safe-bottom));
+                padding: 10px 12px calc(9px + var(--safe-bottom));
+                border-top: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
+                background: var(--canvas);
+            }
+
+            .bottom-nav a {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                flex-direction: column;
+                color: var(--accent);
+                min-width: 59px;
+                padding: 0 3px;
+                border-radius: 15px;
+                font-size: 10px;
+            }
+
+            /* figma: 8px */
+            .bottom-nav a[aria-current="page"] {
+                background: var(--rose);
+                color: var(--ink);
+                font-weight: 700;
+            }
+
+            .bottom-nav .i {
+                width: 21px;
+                height: 21px;
+            }
+
+            .assistant-fab {
+                width: 53px;
+                height: 53px;
+                padding: 0;
+                justify-content: center;
+                right: 21px;
+                bottom: calc(91px + var(--safe-bottom));
+            }
+
+            .assistant-fab span {
+                display: none;
+            }
+
+            .page-heading {
+                margin-bottom: 26px;
+            }
+
+            .page-heading .heading-row {
+                margin-top: 17px;
+                gap: 20px;
+            }
+
+            .page-heading h1 {
+                font-size: 42px;
+                line-height: 1.1;
+            }
+
+            .page-heading p {
+                font-size: 12px;
+                line-height: 1.9;
+                margin-top: 14px;
+            }
+
+            .toast {
+                bottom: calc(90px + var(--safe-bottom));
+                width: max-content;
+                font-size: 12px;
+            }
+
+            .sheet {
+                width: 100%;
+                max-width: none;
+                margin: auto 0 0;
+                border-radius: 28px 28px 0 0;
+            }
+
+            .sheet-inner {
+                padding: 12px 24px calc(30px + var(--safe-bottom));
+            }
+
+            .sheet-handle {
+                display: block;
+                width: 34px;
+                height: 4px;
+                border-radius: 5px;
+                background: var(--lilac);
+                margin: 0 auto 16px;
+            }
+
+            .sheet h2 {
+                font-size: 27px;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .main {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .topbar {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .top-dedication {
+                font-size: 8px;
+            }
+
+            /* figma: 6px */
+            .home-heading h1 {
+                font-size: 39px;
+            }
+
+            .birthday-copy {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+
+            .birthday-copy h2 {
+                font-size: 38px;
+            }
+
+            .cd-cell {
+                width: 54px;
+            }
+
+            .cd-cell span {
+                font-size: 9px;
+                letter-spacing: .6px;
+            }
+
+            .bottom-nav a {
+                min-width: 0;
+                flex: 1;
+                font-size: 9.5px;
+            }
+
+            .page-heading h1 {
+                font-size: 37px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Iconos (los mismos trazos del Figma) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <defs>
+            <symbol id="i-home" viewBox="0 0 24 24">
+                <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" />
+            </symbol>
+            <symbol id="i-link" viewBox="0 0 24 24">
+                <path d="m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0M16 8l1-1a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0"
+                    transform="scale(.95)" />
+            </symbol>
+            <symbol id="i-idea" viewBox="0 0 24 24">
+                <path d="M9 18h6M10 21h4M8 14a7 7 0 1 1 8 0l-1 2H9Z" />
+            </symbol>
+            <symbol id="i-calendar" viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="16" rx="3" />
+                <path d="M7 3v4m10-4v4M3 11h18m-13 4h1m6 0h1m-8 3h1" />
+            </symbol>
+            <symbol id="i-book" viewBox="0 0 24 24">
+                <path d="M12 5C8 2 3 4 3 4v15s5-2 9 1c4-3 9-1 9-1V4s-5-2-9 1Zm0 0v15" />
+            </symbol>
+            <symbol id="i-spark" viewBox="0 0 24 24">
+                <path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5ZM20 2v4m-2-2h4" />
+            </symbol>
+            <symbol id="i-arrow" viewBox="0 0 24 24">
+                <path d="M4 12h15m-5-5 5 5-5 5" />
+            </symbol>
+            <symbol id="i-back" viewBox="0 0 24 24">
+                <path d="m14 6-6 6 6 6" />
+            </symbol>
+            <symbol id="i-lock" viewBox="0 0 24 24">
+                <rect x="5" y="10" width="14" height="11" rx="3" />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2" />
+            </symbol>
+            <symbol id="i-heart" viewBox="0 0 24 24">
+                <path d="M20 5c-3-3-6-1-8 1-2-2-5-4-8-1-5 5 4 12 8 15 4-3 13-10 8-15Z" />
+            </symbol>
+            <symbol id="i-plus" viewBox="0 0 24 24">
+                <path d="M12 5v14M5 12h14" />
+            </symbol>
+            <symbol id="i-close" viewBox="0 0 24 24">
+                <path d="m6 6 12 12M6 18 18 6" />
+            </symbol>
+            <symbol id="i-chevron" viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7" />
+            </symbol>
+            <symbol id="i-check" viewBox="0 0 24 24">
+                <path d="m5 12 4 4L19 6" />
+            </symbol>
+            <symbol id="i-copy" viewBox="0 0 24 24">
+                <rect x="8" y="8" width="12" height="13" rx="2" />
+                <path d="M15 8V3H3v13h5" />
+            </symbol>
+            <symbol id="i-mic" viewBox="0 0 24 24">
+                <rect x="9" y="2" width="6" height="13" rx="3" />
+                <path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-4 0h8" />
+            </symbol>
+            <symbol id="i-send" viewBox="0 0 24 24">
+                <path d="m3 3 18 9-18 9 4-9Zm4 9h14" />
+            </symbol>
+            <symbol id="i-flower" viewBox="0 0 24 24">
+                <path d="M12 12C2 9 5 0 12 8c7-8 10 1 0 4 10-3 12 7 2 4 5 9-5 11-4 1-8 6-12-3-2-4Z" />
+                <path d="M12 17v6" />
+            </symbol>
+            <!-- Destello de cuatro puntas (reemplaza el glifo ✧ del Figma, que en iOS se dibuja distinto según la fuente) -->
+            <symbol id="i-star" viewBox="0 0 24 24">
+                <path
+                    d="M12 1.5C12.9 8.2 15.8 11.1 22.5 12 15.8 12.9 12.9 15.8 12 22.5 11.1 15.8 8.2 12.9 1.5 12 8.2 11.1 11.1 8.2 12 1.5Z" />
+            </symbol>
+        </defs>
+    </svg>
+
+    <div class="app">
+
+        <!-- ===== Barra lateral (escritorio y tableta) ===== -->
+        <aside class="sidebar">
+            <a class="wordmark" href="#/inicio" aria-label="V&amp;J, ir al inicio">V<span>&amp;</span>J<small>Hecho con
+                    cariño</small></a>
+            <div class="sidebar-note">Un pequeño mundo.<br><i>Todo tuyo.</i></div>
+            <nav aria-label="Navegación principal">
+                <a class="nav-item" href="#/inicio" data-nav="inicio"><svg class="i" aria-hidden="true">
+                        <use href="#i-home" />
+                    </svg><span>Inicio</span><span class="nav-dot"></span></a>
+                <a class="nav-item" href="#/links" data-nav="links"><svg class="i" aria-hidden="true">
+                        <use href="#i-link" />
+                    </svg><span>Links</span><span class="nav-dot"></span></a>
+                <a class="nav-item" href="#/ideas" data-nav="ideas"><svg class="i" aria-hidden="true">
+                        <use href="#i-idea" />
+                    </svg><span>Ideas</span><span class="nav-dot"></span></a>
+                <a class="nav-item" href="#/calendario" data-nav="calendario"><svg class="i" aria-hidden="true">
+                        <use href="#i-calendar" />
+                    </svg><span>Calendario</span><span class="nav-dot"></span></a>
+                <a class="nav-item" href="#/espacio" data-nav="espacio"><svg class="i" aria-hidden="true">
+                        <use href="#i-book" />
+                    </svg><span>Espacio</span><span class="nav-dot"></span></a>
+            </nav>
+            <div class="sidebar-bottom">
+                <svg class="i" style="width:34px;height:34px" aria-hidden="true">
+                    <use href="#i-flower" />
+                </svg>
+                <p>Para tus ideas,<br>tus días y todo lo bonito.</p>
+                <span>V &amp; J · Solo para ti</span>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <header class="topbar">
+                <a class="mobile-brand" href="#/inicio" aria-label="V&amp;J, ir al inicio">V&amp;J</a>
+                <span class="top-dedication">Un espacio para ti, Verónika</span>
+                <div class="top-right">
+                    <span>Creado con cariño</span>
+                    <svg class="i" style="width:16px;height:16px" aria-hidden="true">
+                        <use href="#i-heart" />
+                    </svg>
+                    <button class="avatar" id="aboutBtn" type="button" aria-label="Sobre tu espacio"
+                        aria-haspopup="dialog">V</button>
+                </div>
+            </header>
+
+            <main class="main" id="main" tabindex="-1">
+
+                <!-- ===================== INICIO ===================== -->
+                <section class="page" data-page="inicio" aria-label="Inicio">
+                    <p class="page-eyebrow"><span class="tiny-line"></span>Qué bonito tenerte aquí</p>
+
+                    <div class="home-heading">
+                        <div>
+                            <h1>Hola, <i>Verónika.</i><svg class="i heading-spark" aria-hidden="true">
+                                    <use href="#i-star" />
+                                </svg></h1>
+                            <p>Este rinconcito es tuyo. Para crear, soñar y volver a ti.</p>
+                        </div>
+                        <div class="date-stamp" aria-hidden="true">
+                            <svg class="i" style="width:25px;height:25px">
+                                <use href="#i-flower" />
+                            </svg>
+                            <span>Con mucho<br><b>cariño, J.</b></span>
+                        </div>
+                    </div>
+
+                    <section class="birthday-card" aria-labelledby="bday-title">
+                        <div class="birthday-copy">
+                            <span class="pill birthday-pill rise" style="--n:1"><svg class="i"
+                                    style="width:14px;height:14px" aria-hidden="true">
+                                    <use href="#i-calendar" />
+                                </svg>15 de noviembre · 2026</span>
+
+                            <!-- Antes de la fecha -->
+                            <div data-state="counting">
+                                <h2 id="bday-title" class="rise" style="--n:1">Algo bonito<br> está por <i>llegar.</i>
+                                </h2>
+                                <p class="rise" style="--n:1">Hay palabras que esperan su momento.<br>Y estas están
+                                    guardadas solo para ti.</p>
+                            </div>
+                            <!-- Al llegar la fecha -->
+                            <div data-state="ready" hidden>
+                                <h2 id="bday-title-ready">Feliz cumpleaños, <i>Verónika.</i></h2>
+                                <p>Hay palabras que esperaron su momento.<br>Ya puedes abrirlas.</p>
+                            </div>
+
+                            <div class="countdown rise" style="--n:2" id="countdown" role="group"
+                                aria-label="Tiempo restante para el cumpleaños">
+                                <div class="cd-cell"><strong id="cd-d" aria-hidden="true">00</strong><span
+                                        aria-hidden="true">Días</span></div>
+                                <div class="cd-cell"><strong id="cd-h" aria-hidden="true">00</strong><span
+                                        aria-hidden="true">Horas</span></div>
+                                <div class="cd-cell"><strong id="cd-m" aria-hidden="true">00</strong><span
+                                        aria-hidden="true">Min</span></div>
+                                <div class="cd-cell"><strong id="cd-s" aria-hidden="true">00</strong><span
+                                        aria-hidden="true">Seg</span></div>
+                            </div>
+
+                            <button class="letter-link" id="letterBtn" type="button">
+                                <svg class="i" aria-hidden="true">
+                                    <use href="#i-lock" />
+                                </svg>
+                                <span id="letterText">Tu carta se abre el 15 de noviembre</span>
+                                <svg class="i" aria-hidden="true">
+                                    <use href="#i-arrow" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="birthday-art">
+                            <svg class="i art-star star-one" aria-hidden="true">
+                                <use href="#i-star" />
+                            </svg>
+                            <div class="rise" style="--n:0">
+                                <div class="logo-frame"><img src="img/logo.jpg" width="720" height="720"
+                                        alt="V&amp;J: monograma con dos gatos, un capibara y flores" decoding="async">
+                                </div>
+                            </div>
+                            <svg class="i art-star star-two" aria-hidden="true">
+                                <use href="#i-star" />
+                            </svg>
+                            <span class="art-caption">un regalo que también es un lugar</span>
+                            <svg class="handdrawn" viewBox="0 0 200 30" aria-hidden="true">
+                                <path d="M4 13Q90 30 195 9M35 22Q100 28 161 19" />
+                            </svg>
+                        </div>
+                    </section>
+
+                    <div class="section-heading">
+                        <h2>Mientras tanto, <i>hazlo tuyo.</i></h2>
+                        <span>Lo bonito ya empezó</span>
+                    </div>
+
+                    <section class="shortcut-grid" aria-label="Accesos rápidos">
+                        <a class="shortcut shortcut-0 pressable" href="#/links">
+                            <div class="row spread"><span class="shortcut-icon"><svg class="i" aria-hidden="true">
+                                        <use href="#i-link" />
+                                    </svg></span><svg class="i" aria-hidden="true">
+                                    <use href="#i-arrow" />
+                                </svg></div>
+                            <h3>Tu bóveda</h3>
+                            <p>Eso que te inspira, en un solo lugar.</p><span class="shortcut-meta" data-meta="links">3
+                                tesoros guardados</span>
+                        </a>
+                        <a class="shortcut shortcut-1 pressable" href="#/ideas">
+                            <div class="row spread"><span class="shortcut-icon"><svg class="i" aria-hidden="true">
+                                        <use href="#i-idea" />
+                                    </svg></span><svg class="i" aria-hidden="true">
+                                    <use href="#i-arrow" />
+                                </svg></div>
+                            <h3>De idea a plan</h3>
+                            <p>Las grandes cosas empiezan por aquí.</p><span class="shortcut-meta" data-meta="ideas">2
+                                ideas esperando</span>
+                        </a>
+                        <a class="shortcut shortcut-2 pressable" href="#/espacio">
+                            <div class="row spread"><span class="shortcut-icon"><svg class="i" aria-hidden="true">
+                                        <use href="#i-book" />
+                                    </svg></span><svg class="i" aria-hidden="true">
+                                    <use href="#i-arrow" />
+                                </svg></div>
+                            <h3>Tu pequeño espacio</h3>
+                            <p>Notas, prompts y un poco de orden.</p><span class="shortcut-meta">A tu ritmo,
+                                siempre</span>
+                        </a>
+                    </section>
+
+                    <div class="home-footer">
+                        <svg class="i" aria-hidden="true">
+                            <use href="#i-heart" />
+                        </svg>
+                        <span>No tienes que hacerlo todo hoy. Este espacio va a tu ritmo.</span>
+                    </div>
+                </section>
+
+                <!-- Las demás pantallas se generan abajo (andamio) y se reemplazan en cada entrega -->
+            </main>
+
+            <button class="assistant-fab" id="fab" type="button" aria-label="Una chispa de ayuda">
+                <svg class="i" aria-hidden="true">
+                    <use href="#i-spark" />
+                </svg><span>Una chispa de ayuda</span>
+            </button>
+
+            <nav class="bottom-nav" aria-label="Navegación móvil">
+                <a href="#/inicio" data-nav="inicio"><svg class="i" aria-hidden="true">
+                        <use href="#i-home" />
+                    </svg><span>Inicio</span></a>
+                <a href="#/links" data-nav="links"><svg class="i" aria-hidden="true">
+                        <use href="#i-link" />
+                    </svg><span>Links</span></a>
+                <a href="#/ideas" data-nav="ideas"><svg class="i" aria-hidden="true">
+                        <use href="#i-idea" />
+                    </svg><span>Ideas</span></a>
+                <a href="#/calendario" data-nav="calendario"><svg class="i" aria-hidden="true">
+                        <use href="#i-calendar" />
+                    </svg><span>Calendario</span></a>
+                <a href="#/espacio" data-nav="espacio"><svg class="i" aria-hidden="true">
+                        <use href="#i-book" />
+                    </svg><span>Espacio</span></a>
+            </nav>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"><svg class="i" aria-hidden="true">
+                <use href="#i-spark" />
+            </svg><span></span></div>
+
+        <dialog class="sheet" id="aboutSheet" aria-labelledby="aboutTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="aboutTitle">Un espacio solo para ti</h2>
+                    <form method="dialog"><button class="icon-button" aria-label="Cerrar"><svg class="i"
+                                aria-hidden="true">
+                                <use href="#i-close" />
+                            </svg></button></form>
+                </div>
+                <div class="sheet-body">
+                    <p>V&amp;J es un pequeño lugar para tus ideas, tus días y todo lo que todavía está por venir.</p>
+                    <form method="dialog"><button class="button">Qué bonito estar aquí <svg class="i"
+                                aria-hidden="true">
+                                <use href="#i-heart" />
+                            </svg></button></form>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <noscript>
+        <p style="padding:24px;font-family:system-ui">Para abrir tu espacio necesitas activar JavaScript.</p>
+    </noscript>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const $ = (sel, root = document) => root.querySelector(sel);
+            const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+
+            /* ---------------------------------------------------------
+               Fecha de apertura: 15 nov 2026, 00:00 hora de Caracas (UTC-4) = 04:00 UTC.
+               Para probar el estado "ya llegó el día" puedes abrir la página con
+               ?fecha=2026-11-15T04:00:00Z  (o cualquier fecha ISO). Esto solo cambia lo
+               que se VE en el contador; la carta se protegerá con cifrado en su pantalla.
+               --------------------------------------------------------- */
+            const UNLOCK_AT = (() => {
+                const q = new URLSearchParams(location.search).get('fecha');
+                const t = q ? Date.parse(q) : NaN;
+                return Number.isNaN(t) ? Date.parse('2026-11-15T04:00:00Z') : t;
+            })();
+
+            /* ---------- Pantallas (andamio de las que aún no se entregan) ---------- */
+            const SCAFFOLD = {
+                links: { eyebrow: 'Pequeños hallazgos', title: 'Tu bóveda', italic: 'de inspiración.', text: 'Guarda eso que quieres probar. Vuelve cuando llegue la chispa.' },
+                ideas: { eyebrow: 'Deja que crezca', title: 'De idea', italic: 'a plan.', text: 'Un lugar para esas ideas que no te dejan de dar vueltas.' },
+                calendario: { eyebrow: 'Un día a la vez', title: 'Tus días', italic: 'bonitos.', text: 'Un poquito de orden para dejarle espacio a la magia.' },
+                espacio: { eyebrow: 'Vuelve a ti', title: 'Tu pequeño', italic: 'espacio.', text: 'Para vaciar la mente, guardar palabras y empezar de nuevo.' }
+            };
+            const PAGES = ['inicio', ...Object.keys(SCAFFOLD)];
+            const main = $('#main');
+
+            Object.entries(SCAFFOLD).forEach(([id, s]) => {
+                const sec = document.createElement('section');
+                sec.className = 'page';
+                sec.dataset.page = id;
+                sec.hidden = true;
+                sec.setAttribute('aria-label', s.title + ' ' + s.italic);
+                sec.innerHTML =
+                    '<div class="page-heading"><span class="page-eyebrow"><span class="tiny-line"></span></span>' +
+                    '<div class="row spread heading-row"><div><h1></h1><p></p></div></div></div>' +
+                    '<p class="quiet-note">Esta pantalla llega en la próxima entrega.</p>';
+                $('.page-eyebrow', sec).append(s.eyebrow);
+                $('h1', sec).append(s.title + ' ', Object.assign(document.createElement('i'), { textContent: s.italic }));
+                $('p', sec).textContent = s.text;
+                main.append(sec);
+            });
+
+            /* ---------- Navegación por hash (#/links, #/ideas…) ---------- */
+            function currentPage() {
+                const h = location.hash.replace(/^#\/?/, '');
+                return PAGES.includes(h) ? h : 'inicio';
+            }
+            let firstRender = true;
+            function render() {
+                const page = currentPage();
+                $$('[data-page]').forEach((s) => { s.hidden = s.dataset.page !== page; });
+                $$('[data-nav]').forEach((a) => {
+                    if (a.dataset.nav === page) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+                });
+                if (!firstRender) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); }
+                firstRender = false;
+            }
+            window.addEventListener('hashchange', render);
+
+            /* ---------- Entrada de Inicio: solo la primera vez de la sesión ---------- */
+            try {
+                if (!sessionStorage.getItem('vj-intro')) {
+                    document.documentElement.classList.add('intro');
+                    sessionStorage.setItem('vj-intro', '1');
+                    setTimeout(() => document.documentElement.classList.remove('intro'), 1200);
+                }
+            } catch (_) { /* Safari en modo privado puede bloquear sessionStorage */ }
+
+            /* ---------- Aviso (toast) ---------- */
+            const toastEl = $('#toast');
+            let toastTimer;
+            function toast(msg) {
+                $('span', toastEl).textContent = msg;
+                toastEl.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3500);
+            }
+
+            /* ---------- Cuenta regresiva ---------- */
+            const cells = { d: $('#cd-d'), h: $('#cd-h'), m: $('#cd-m'), s: $('#cd-s') };
+            const group = $('#countdown');
+            const pad = (n) => String(n).padStart(2, '0');
+            const plural = (n, one, many) => n + ' ' + (n === 1 ? one : many);
+            let shown = {};
+            let lastMinute = -1;
+            let ready = null;
+            let timer = null;
+
+            function setReady(isReady) {
+                if (ready === isReady) return;
+                ready = isReady;
+                $('[data-state="counting"]').hidden = isReady;
+                $('[data-state="ready"]').hidden = !isReady;
+                group.hidden = isReady;
+                $('#bday-title-ready').parentElement.hidden = !isReady;
+                $('.birthday-card').setAttribute('aria-labelledby', isReady ? 'bday-title-ready' : 'bday-title');
+                $('#letterText').textContent = isReady ? 'Abrir mi carta' : 'Tu carta se abre el 15 de noviembre';
+                $('use', $('#letterBtn')).setAttribute('href', isReady ? '#i-heart' : '#i-lock');
+            }
+
+            function update() {
+                const rem = Math.max(0, UNLOCK_AT - Date.now()); // nunca negativo
+                const v = {
+                    d: Math.floor(rem / 864e5),
+                    h: Math.floor(rem / 36e5) % 24,
+                    m: Math.floor(rem / 6e4) % 60,
+                    s: Math.floor(rem / 1e3) % 60
+                };
+                for (const k of Object.keys(v)) {
+                    const text = pad(v[k]);
+                    if (shown[k] !== text) {
+                        cells[k].textContent = text;
+                        if (shown[k] !== undefined) { cells[k].classList.remove('tick'); void cells[k].offsetWidth; cells[k].classList.add('tick'); }
+                        shown[k] = text;
+                    }
+                }
+                // Resumen para lector de pantalla: se actualiza una vez por minuto, no cada segundo
+                const minuteKey = Math.floor(rem / 6e4);
+                if (minuteKey !== lastMinute) {
+                    lastMinute = minuteKey;
+                    group.setAttribute('aria-label', rem === 0 ? 'Ya llegó el día'
+                        : 'Faltan ' + plural(v.d, 'día', 'días') + ', ' + plural(v.h, 'hora', 'horas') + ' y ' + plural(v.m, 'minuto', 'minutos'));
+                }
+                setReady(rem === 0);
+                if (rem === 0) stop();
+            }
+            function start() { if (!timer) { update(); timer = setInterval(update, 1000); } }
+            function stop() { clearInterval(timer); timer = null; }
+            // Al volver a primer plano se recalcula la fecha (el teléfono pausa los temporizadores en segundo plano)
+            document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+
+            /* ---------- Botones ---------- */
+            $('#letterBtn').addEventListener('click', () => {
+                toast(ready
+                    ? 'Aquí se abrirá tu carta. Esa pantalla llega en la próxima entrega.'
+                    : 'Tu carta se abre el 15 de noviembre de 2026, a las 00:00 en Caracas.');
+            });
+            $('#fab').addEventListener('click', () => toast('Tu cómplice creativa llega muy pronto.'));
+
+            const sheet = $('#aboutSheet');
+            const aboutBtn = $('#aboutBtn');
+            aboutBtn.addEventListener('click', () => sheet.showModal());
+            sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); }); // clic en el velo
+            sheet.addEventListener('close', () => aboutBtn.focus());
+
+            /* ---------- Arranque ---------- */
+            render();
+            start();
+
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => { }));
+            }
+        })();
+    </script>
+</body>
+
+</html>
