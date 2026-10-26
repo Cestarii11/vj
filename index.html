@@ -7,7 +7,7 @@
     <title>V&amp;J</title>
     <meta name="description" content="Un pequeño espacio hecho para ti">
     <meta name="color-scheme" content="light">
-    <meta name="theme-color" content="#FFF1D7">
+    <meta name="theme-color" content="#FFF1D7" id="themeColor">
 
     <!-- PWA / iPhone (Safari → Compartir → Añadir a pantalla de inicio) -->
     <link rel="manifest" href="manifest.json">
@@ -27,7 +27,7 @@
 
     <style>
         /* =========================================================
-   V&J · Pantalla 1: Inicio
+   V&J · Pantallas: Inicio, Carta, Links e Ideas
    Valores tomados del archivo de Figma Make (index.css).
    Donde se cambió algo por legibilidad en iPhone, el valor
    original del Figma queda anotado en un comentario "figma: Npx"
@@ -48,6 +48,8 @@
             --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
             --safe-top: env(safe-area-inset-top, 0px);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
         }
 
         /* ---------- Base ---------- */
@@ -923,6 +925,800 @@
             height: 17px;
         }
 
+        /* ---------- Carta (modo oscuro del Figma) ---------- */
+        body.letter-mode {
+            background: var(--letter);
+        }
+
+        body.letter-mode .workspace {
+            background: var(--letter);
+            color: var(--canvas);
+            min-height: 100dvh;
+        }
+
+        body.letter-mode .topbar,
+        body.letter-mode .assistant-fab,
+        body.letter-mode .bottom-nav {
+            display: none;
+        }
+
+        body.letter-mode .main {
+            padding-bottom: 40px;
+        }
+
+        .letter-view {
+            position: relative;
+            min-height: calc(100dvh - 90px);
+        }
+
+        .text-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            font-size: 13px;
+            color: var(--canvas);
+        }
+
+        /* figma: 12px */
+        .text-button:hover {
+            opacity: .8;
+        }
+
+        .letter-brand {
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-family: var(--font-display);
+            font-size: 35px;
+            line-height: 44px;
+            letter-spacing: -1px;
+            color: var(--canvas);
+        }
+
+        .letter-lock {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            text-align: center;
+            padding: 80px 15px 20px;
+        }
+
+        .letter-lock .page-eyebrow {
+            color: var(--lilac);
+            letter-spacing: 1.8px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .letter-lock h1 {
+            font-size: 55px;
+            line-height: 1.07;
+            color: var(--canvas);
+        }
+
+        .letter-lock>p {
+            font-size: 13px;
+            line-height: 2;
+            color: var(--rose);
+        }
+
+        .letter-lock .pill {
+            background: var(--canvas);
+            color: var(--ink);
+        }
+
+        .pin-area {
+            display: grid;
+            justify-items: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 340px;
+            margin-top: 4px;
+        }
+
+        .pin-label {
+            font-size: 13px;
+            color: var(--rose);
+        }
+
+        .pin-field {
+            position: relative;
+            display: flex;
+            gap: 8px;
+        }
+
+        .pin-input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            font-size: 16px;
+            z-index: 1;
+            caret-color: transparent;
+            cursor: text;
+        }
+
+        .pin-box {
+            width: 44px;
+            height: 56px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            border: 1px solid color-mix(in srgb, var(--lilac) 70%, transparent);
+            font-family: var(--font-display);
+            font-size: 30px;
+            color: var(--canvas);
+            transition: border-color .2s, background .2s;
+        }
+
+        .pin-field:focus-within .pin-box.is-active {
+            border-color: var(--canvas);
+            background: color-mix(in srgb, var(--canvas) 9%, transparent);
+        }
+
+        .pin-field.is-error .pin-box {
+            border-color: var(--rose);
+        }
+
+        .pin-error {
+            min-height: 22px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--rose);
+        }
+
+        .pin-area.is-success .pin-box {
+            animation: pin-out .48s ease forwards;
+        }
+
+        .letter-btn {
+            width: 100%;
+            background: var(--rose);
+            color: var(--ink);
+        }
+
+        .letter-btn:hover {
+            background: var(--lilac);
+        }
+
+        .letter-btn.ghost {
+            background: transparent;
+            border: 1px solid var(--rose);
+            color: var(--canvas);
+        }
+
+        .letter-btn.ghost:hover {
+            background: color-mix(in srgb, var(--canvas) 10%, transparent);
+        }
+
+        .letter-open {
+            position: relative;
+            z-index: 2;
+            max-width: 38ch;
+            margin: 0 auto;
+            padding: 64px 0 24px;
+        }
+
+        .letter-open h1 {
+            font-size: 30px;
+            line-height: 38px;
+            letter-spacing: -.5px;
+            margin: 10px 0 28px;
+            color: var(--canvas);
+        }
+
+        .letter-open h1:focus {
+            outline: none;
+        }
+
+        .letter-date {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--canvas);
+            opacity: .8;
+        }
+
+        .letter-greeting {
+            font-family: var(--font-display);
+            font-size: 28px;
+            line-height: 34px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .letter-body p {
+            font-size: 17px;
+            line-height: 29px;
+            margin-bottom: 24px;
+            color: var(--canvas);
+        }
+
+        .letter-sign {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-size: 28px;
+            line-height: 34px;
+            margin: 32px 0 40px;
+        }
+
+        .confetti {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .confetti i {
+            position: absolute;
+            top: -14px;
+            width: var(--w);
+            height: var(--h);
+            background: var(--c);
+            border-radius: var(--r);
+            opacity: 0;
+            animation: confetti-fall var(--d) var(--delay) ease-in forwards;
+        }
+
+        /* ---------- Links · "Tu bóveda de inspiración" ---------- */
+        .heading-row>.button {
+            flex-shrink: 0;
+        }
+
+        .links-toolbar {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 20px;
+            min-width: 0;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chip {
+            min-height: 44px;
+            padding: 10px 18px;
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            border-radius: 30px;
+            font-size: 11px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 7px;
+            white-space: nowrap;
+            transition: background .2s, color .2s, border-color .2s;
+        }
+
+        .chip:hover:not([aria-pressed="true"]) {
+            background: color-mix(in srgb, var(--rose) 60%, transparent);
+        }
+
+        .chip[aria-pressed="true"] {
+            background: var(--ink);
+            color: var(--canvas);
+            border-color: var(--ink);
+        }
+
+        .link-text-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 44px;
+            padding: 0 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .link-text-btn .i {
+            width: 17px;
+            height: 17px;
+        }
+
+        .link-text-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Tarjetas compartidas por Links e Ideas (mismas medidas y tonos del Figma) */
+        .links-list,
+        .ideas-list {
+            container-type: inline-size;
+        }
+
+        .content-grid {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        @container (max-width: 560px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .content-card {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            padding: 26px;
+            border-radius: 22px;
+            background: color-mix(in srgb, var(--lilac) 55%, var(--canvas));
+            border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .content-card:nth-child(even) {
+            background: color-mix(in srgb, var(--rose) 80%, var(--canvas));
+        }
+
+        .content-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px color-mix(in srgb, var(--ink) 5%, transparent);
+        }
+
+        .content-grid.anim .content-card {
+            animation: rise .4s var(--ease-out) both;
+            animation-delay: calc(var(--n, 0) * 50ms);
+        }
+
+        .card-icon {
+            color: var(--accent);
+        }
+
+        .category {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 4px;
+            overflow-wrap: anywhere;
+        }
+
+        .link-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-pill {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 30px;
+            padding: 6px 10px;
+            border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+            border-radius: 30px;
+            background: var(--canvas);
+            color: var(--olive);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* figma: 9px */
+        .status-pill::after {
+            content: "";
+            position: absolute;
+            inset: -8px -6px;
+        }
+
+        .status-pill .i {
+            width: 13px;
+            height: 13px;
+        }
+
+        .link-open {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 25px 0 6px;
+        }
+
+        .link-open h3 {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+
+        .link-open:hover h3 {
+            text-decoration: underline;
+        }
+
+        .link-open .i {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            transition: transform .2s;
+        }
+
+        .link-open:hover .i {
+            transform: translateX(3px);
+        }
+
+        .link-domain {
+            font-size: 10px;
+            color: var(--olive);
+            overflow-wrap: anywhere;
+        }
+
+        .link-note {
+            font-size: 12px;
+            line-height: 1.8;
+            opacity: .75;
+            margin-top: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        .link-foot {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .link-foot .category {
+            position: relative;
+            max-width: 60%;
+            cursor: pointer;
+        }
+
+        .link-foot .category::after {
+            content: "";
+            position: absolute;
+            inset: -14px -8px -10px;
+        }
+
+        .link-actions {
+            display: flex;
+            margin: -10px -10px -10px 0;
+        }
+
+        .link-actions button {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--accent);
+        }
+
+        .link-actions button:hover {
+            background: color-mix(in srgb, var(--canvas) 55%, transparent);
+            color: var(--ink);
+        }
+
+        .link-actions .i {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Estados vacíos (con los gatitos y motivos del diseño final) */
+        .personal-empty {
+            text-align: center;
+            padding-bottom: 24px;
+        }
+
+        .empty {
+            padding: 45px 20px;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            gap: 18px;
+            color: var(--accent);
+        }
+
+        .empty h2 {
+            color: var(--ink);
+        }
+
+        .empty p {
+            font-size: 12px;
+        }
+
+        .personal-empty .row {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Formularios de las hojas (mismos valores que el Figma) */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .input {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 15px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--ink);
+            border-radius: 12px;
+            border: 1px solid color-mix(in srgb, var(--accent) 23%, transparent);
+            background: color-mix(in srgb, var(--rose) 48%, var(--canvas));
+            -webkit-appearance: none;
+            appearance: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        /* 16 px: por debajo Safari hace zoom */
+        .input::placeholder {
+            color: color-mix(in srgb, var(--accent) 72%, var(--canvas));
+            opacity: 1;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--ink);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+        }
+
+        .input[aria-invalid="true"] {
+            border-color: var(--ink);
+        }
+
+        textarea.input {
+            resize: none;
+            display: block;
+        }
+
+        input[type="date"].input {
+            display: block;
+            text-align: left;
+            min-width: 0;
+        }
+
+        .select-wrap {
+            position: relative;
+        }
+
+        .select-wrap select {
+            padding-right: 46px;
+            text-overflow: ellipsis;
+        }
+
+        .select-wrap .i {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .form-error {
+            padding: 12px 16px;
+            border-left: 3px solid var(--ink);
+            background: var(--rose);
+            border-radius: 6px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: var(--olive);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 0;
+        }
+
+        .button-ghost {
+            background: transparent;
+            color: var(--ink);
+            border: 1px solid var(--accent);
+        }
+
+        .button-ghost:hover {
+            background: color-mix(in srgb, var(--rose) 60%, transparent);
+        }
+
+        /* ---------- Ideas · "De idea a plan" ---------- */
+        .segments {
+            display: flex;
+            padding: 5px;
+            background: var(--rose);
+            border-radius: 16px;
+            width: max-content;
+            max-width: 100%;
+            margin-bottom: 28px;
+        }
+
+        .segments button {
+            min-height: 44px;
+            padding: 12px 22px;
+            border-radius: 11px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-size: 11px;
+            transition: background .2s;
+        }
+
+        .segments button[aria-pressed="true"] {
+            background: var(--canvas);
+            box-shadow: 0 3px 8px color-mix(in srgb, var(--ink) 5%, transparent);
+        }
+
+        .segments button span {
+            opacity: .6;
+            font-size: 10px;
+        }
+
+        /* figma: 9px */
+        .content-card.idea-card {
+            padding: 0;
+        }
+
+        .idea-hit {
+            display: block;
+            width: 100%;
+            height: 100%;
+            padding: 26px;
+            text-align: left;
+            border-radius: inherit;
+        }
+
+        .idea-card h3 {
+            font-size: 19px;
+            margin-top: 25px;
+            overflow-wrap: anywhere;
+        }
+
+        .idea-card p {
+            font-size: 12px;
+            opacity: .75;
+            margin: 15px 0 20px;
+            overflow-wrap: anywhere;
+        }
+
+        .idea-card .card-bottom {
+            margin-top: 20px;
+        }
+
+        .idea-card p+.card-bottom {
+            margin-top: 0;
+        }
+
+        .card-bottom {
+            padding-top: 15px;
+            border-top: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+        }
+
+        .card-bottom .i {
+            width: 18px;
+            height: 18px;
+        }
+
+        .card-bottom .pill .i {
+            width: 14px;
+            height: 14px;
+        }
+
+        .wide {
+            grid-column: 1 / -1;
+        }
+
+        /* ---------- Detalles personales: gatitos, lirios y gustos de Verónika ---------- */
+        .personal-motif {
+            display: block;
+            width: 88px;
+            height: 66px;
+            flex-shrink: 0;
+            overflow: visible;
+            pointer-events: none;
+            color: var(--ink);
+        }
+
+        .personal-motif-eyebrow-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .personal-motif-eyebrow-row .personal-motif {
+            width: 80px;
+            height: 60px;
+            margin-top: -15px;
+        }
+
+        .personal-motif-logo-scene {
+            position: relative;
+            width: fit-content;
+            margin: 0 0 20px;
+        }
+
+        .personal-motif-logo-scene .personal-motif-logo-lily {
+            position: absolute;
+            right: -50px;
+            top: -16px;
+            width: 108px;
+            height: 108px;
+            transform: rotate(16deg);
+        }
+
+        .personal-motif-logo-scene .personal-motif-logo-cats {
+            position: absolute;
+            right: -36px;
+            bottom: -34px;
+            width: 126px;
+            height: 95px;
+            transform: rotate(-4deg);
+        }
+
+        .personal-motif-favorites {
+            margin-top: 34px;
+            padding: 24px 0 8px;
+            border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+        }
+
+        .personal-motif-favorites>p {
+            font-family: var(--font-display);
+            font-size: 24px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .personal-motif-favorites>div {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .personal-motif-favorites figure {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .personal-motif-favorites figcaption {
+            color: var(--olive);
+            font-size: 10px;
+            text-align: center;
+        }
+
+        /* figma: 9px */
+
         /* ---------- Animaciones ---------- */
         @keyframes page-in {
             from {
@@ -961,6 +1757,29 @@
         @keyframes sparkle {
             50% {
                 transform: rotate(2deg) scale(.94);
+            }
+        }
+
+        @keyframes pin-out {
+            to {
+                opacity: 0;
+                transform: translateY(-6px) scale(.9);
+            }
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, -10px, 0) rotate(0);
+            }
+
+            12% {
+                opacity: .75;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate3d(var(--x), 105vh, 0) rotate(var(--rot));
             }
         }
 
@@ -1605,6 +2424,1101 @@
             }
         }
 
+        @media (max-width: 600px) {
+            body.letter-mode .main {
+                padding-top: calc(29px + var(--safe-top));
+                padding-bottom: calc(40px + var(--safe-bottom));
+            }
+
+            .letter-view {
+                min-height: calc(100dvh - 70px);
+            }
+
+            .letter-lock {
+                padding-top: 75px;
+                gap: 25px;
+            }
+
+            .letter-lock .page-eyebrow {
+                font-size: 10px;
+                letter-spacing: 1.4px;
+            }
+
+            /* figma: 6px */
+            .letter-lock h1 {
+                font-size: 42px;
+            }
+
+            .letter-lock>p {
+                font-size: 12px;
+            }
+
+            .letter-open {
+                padding-top: 56px;
+            }
+
+            .pin-box {
+                width: 42px;
+                height: 54px;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .pin-field {
+                gap: 6px;
+            }
+
+            .pin-box {
+                width: 38px;
+                height: 50px;
+                font-size: 26px;
+            }
+
+            .letter-lock h1 {
+                font-size: 37px;
+            }
+        }
+
+        @media (min-width: 801px) {
+            .letter-open h1 {
+                font-size: 38px;
+                line-height: 46px;
+            }
+        }
+
+        /* ---------- Links, Ideas y detalles · responsive (mismos cortes que el resto de la app) ---------- */
+
+        @media (max-width: 1150px) {
+            .personal-motif-logo-scene .personal-motif-logo-lily {
+                width: 84px;
+                height: 84px;
+                right: -32px;
+                top: -10px;
+            }
+
+            .personal-motif-logo-scene .personal-motif-logo-cats {
+                width: 106px;
+                height: 80px;
+                right: -20px;
+                bottom: -30px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .links-toolbar {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .chips {
+                flex-basis: 100%;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding: 3px 0 6px;
+                scrollbar-width: none;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .chips::-webkit-scrollbar {
+                display: none;
+            }
+
+            .chip {
+                flex-shrink: 0;
+            }
+
+            .segments {
+                width: 100%;
+            }
+
+            .segments button {
+                flex: 1;
+                padding: 12px 10px;
+                justify-content: center;
+            }
+
+            .personal-motif-logo-scene .personal-motif-logo-lily {
+                width: 68px;
+                height: 68px;
+                right: -24px;
+            }
+
+            .personal-motif-logo-scene .personal-motif-logo-cats {
+                width: 92px;
+                height: 69px;
+                right: -16px;
+                bottom: -27px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .personal-motif {
+                width: 64px;
+                height: 48px;
+            }
+
+            .personal-motif-eyebrow-row .personal-motif {
+                width: 56px;
+                height: 42px;
+                margin-top: -6px;
+            }
+
+            .personal-motif-logo-scene {
+                margin-bottom: 16px;
+            }
+
+            .personal-motif-logo-scene .personal-motif-logo-lily {
+                width: 80px;
+                height: 80px;
+                right: -40px;
+                top: -6px;
+            }
+
+            .personal-motif-logo-scene .personal-motif-logo-cats {
+                width: 108px;
+                height: 81px;
+                right: -30px;
+                bottom: -27px;
+            }
+
+            .personal-motif-favorites {
+                margin-top: 28px;
+                padding-top: 22px;
+            }
+
+            .personal-motif-favorites>p {
+                font-size: 23px;
+            }
+
+            .personal-motif-favorites>div {
+                gap: 4px;
+            }
+
+            .personal-motif-favorites figcaption {
+                font-size: 10px;
+                line-height: 1.7;
+                max-width: 70px;
+            }
+
+            /* figma: 8px */
+            .personal-motif-favorites .personal-motif {
+                width: 58px;
+                height: 48px;
+            }
+
+            .links-toolbar {
+                margin-bottom: 16px;
+            }
+
+            .chips {
+                margin-right: -24px;
+                padding-right: 24px;
+            }
+
+            .link-text-btn {
+                align-self: flex-start;
+            }
+
+            .content-grid {
+                gap: 14px;
+            }
+
+            .content-card {
+                padding: 24px;
+            }
+
+            .idea-hit {
+                padding: 24px;
+            }
+
+            .idea-card h3 {
+                font-size: 18px;
+            }
+
+            .idea-card p {
+                font-size: 13px;
+            }
+
+            .link-note {
+                font-size: 13px;
+            }
+
+            /* figma: 12px */
+            .link-domain {
+                font-size: 11px;
+            }
+
+            /* figma: 10px */
+            .category {
+                font-size: 10px;
+            }
+
+            /* figma: 9px */
+            .segments {
+                gap: 2px;
+                padding: 4px;
+                border-radius: 14px;
+            }
+
+            .segments button {
+                font-size: 11px;
+                gap: 7px;
+                padding: 13px 6px;
+            }
+
+            /* figma: 10px */
+            .empty {
+                padding: 36px 12px;
+            }
+
+            .empty h2 {
+                font-size: 26px;
+            }
+
+            .sheet .form-actions .button {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .chips {
+                margin-right: -16px;
+                padding-right: 16px;
+            }
+
+            .content-card {
+                padding: 22px 20px;
+            }
+
+            .content-card.idea-card {
+                padding: 0;
+            }
+
+            .idea-hit {
+                padding: 22px 20px;
+            }
+        }
+
+        /* ---------- iPhone en horizontal ----------
+   Una pantalla baja sigue siendo un teléfono: como en el Figma final, se oculta la barra lateral
+   y se usa la barra superior compacta + la navegación inferior en fila, respetando el notch. */
+
+        /* ---------- Calendario (Figma) ---------- */
+        .calendar-card {
+            border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+            border-radius: 24px;
+            padding: 28px;
+            background: color-mix(in srgb, var(--rose) 15%, var(--canvas));
+        }
+
+        .calendar-toolbar {
+            gap: 12px;
+        }
+
+        .calendar-toolbar h2 {
+            font-size: 30px;
+        }
+
+        .calendar-toolbar .row {
+            gap: 6px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 25px;
+        }
+
+        .weekday {
+            text-align: center;
+            padding: 16px 0;
+            font-size: 10px;
+            letter-spacing: 1px;
+            color: var(--olive);
+            text-transform: uppercase;
+        }
+
+        /* figma: 9px */
+        .calendar-day {
+            position: relative;
+            height: 65px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            font-size: 14px;
+            color: var(--ink);
+            text-align: center;
+        }
+
+        /* figma: 13px */
+        .calendar-day:hover {
+            background: var(--rose);
+        }
+
+        .calendar-day.selected {
+            background: var(--ink);
+            color: var(--canvas);
+        }
+
+        .calendar-day.birthday-day {
+            border-color: var(--accent);
+        }
+
+        .calendar-day.is-today>span:first-child {
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 4px;
+        }
+
+        .calendar-day .i {
+            width: 13px;
+            height: 13px;
+        }
+
+        .cal-dots {
+            display: flex;
+            gap: 3px;
+            min-height: 5px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .dot.rose {
+            background: var(--rose);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .dot.lilac {
+            background: var(--lilac);
+        }
+
+        .dot.olive {
+            background: var(--olive);
+        }
+
+        .calendar-day.selected .dot.olive {
+            background: var(--canvas);
+        }
+
+        .calendar-day.selected .dot.lilac {
+            background: var(--lilac);
+        }
+
+        .calendar-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 22px;
+            margin-top: 21px;
+            padding-top: 19px;
+            border-top: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+            font-size: 11px;
+            color: var(--accent);
+        }
+
+        /* figma: 9px */
+        .calendar-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .calendar-legend .i {
+            width: 14px;
+            height: 14px;
+        }
+
+        .calendar-note {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 30px 8px 8px;
+            color: var(--olive);
+        }
+
+        .calendar-note>.personal-motif {
+            width: 100px;
+            height: 75px;
+            flex-shrink: 0;
+        }
+
+        .calendar-note h3 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        .calendar-note p {
+            font-size: 12px;
+            margin-top: 4px;
+            line-height: 1.7;
+        }
+
+        /* figma: 11px */
+
+        .day-events {
+            display: grid;
+            gap: 12px;
+        }
+
+        .day-event {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            text-align: left;
+            padding: 18px 20px;
+            border-radius: 15px;
+            background: var(--rose);
+            color: var(--ink);
+        }
+
+        button.day-event:hover {
+            background: color-mix(in srgb, var(--lilac) 45%, var(--rose));
+        }
+
+        .day-event>.i {
+            width: 21px;
+            height: 21px;
+            color: var(--accent);
+        }
+
+        .day-event>.i:last-child {
+            width: 18px;
+            height: 18px;
+            margin-left: auto;
+        }
+
+        .day-event>div {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .day-event small {
+            display: block;
+            font-size: 11px;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            color: var(--olive);
+            font-weight: 600;
+        }
+
+        .day-event h3 {
+            font-size: 15px;
+            margin: 4px 0 2px;
+            overflow-wrap: anywhere;
+        }
+
+        .day-event p {
+            font-size: 12px;
+            color: var(--accent);
+            line-height: 1.5;
+        }
+
+        .day-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 22px 8px 8px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .day-empty .i {
+            width: 30px;
+            height: 30px;
+        }
+
+        .sheet-note {
+            font-size: 12px;
+            line-height: 1.7;
+            color: var(--accent);
+        }
+
+        .text-link {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            color: var(--ink);
+            font-weight: 600;
+        }
+
+        /* ---------- Carta: la barra lateral también se oscurece ---------- */
+        body.letter-mode .sidebar {
+            background: var(--letter);
+            border-right-color: color-mix(in srgb, var(--canvas) 12%, transparent);
+        }
+
+        body.letter-mode .sidebar .wordmark,
+        body.letter-mode .sidebar .sidebar-note i {
+            color: var(--canvas);
+        }
+
+        body.letter-mode .sidebar .sidebar-note,
+        body.letter-mode .sidebar .nav-item,
+        body.letter-mode .sidebar .sidebar-bottom {
+            color: var(--lilac);
+        }
+
+        body.letter-mode .sidebar .nav-item:hover {
+            background: color-mix(in srgb, var(--canvas) 9%, transparent);
+            color: var(--canvas);
+        }
+
+        @media (max-width: 1150px) {
+            .calendar-note>.personal-motif {
+                width: 86px;
+                height: 65px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .calendar-card {
+                padding: 18px;
+            }
+
+            .calendar-toolbar h2 {
+                font-size: 24px;
+            }
+
+            .calendar-toolbar .row {
+                gap: 0;
+            }
+
+            .calendar-day {
+                height: 55px;
+            }
+
+            .calendar-legend {
+                gap: 14px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar-card {
+                padding: 16px 10px;
+                margin: 0 -4px;
+            }
+
+            .calendar-toolbar {
+                flex-wrap: wrap;
+                padding: 0 4px;
+                gap: 4px 8px;
+            }
+
+            .calendar-toolbar h2 {
+                font-size: 22px;
+                white-space: nowrap;
+            }
+
+            .calendar-toolbar .icon-button {
+                width: 36px;
+            }
+
+            .calendar-toolbar .chip {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .calendar-grid {
+                gap: 3px;
+                margin-top: 12px;
+            }
+
+            .weekday {
+                padding: 10px 0;
+            }
+
+            .calendar-day {
+                height: 49px;
+                border-radius: 11px;
+                font-size: 13px;
+                gap: 3px;
+            }
+
+            .calendar-legend {
+                gap: 6px 14px;
+                margin-top: 14px;
+                padding-top: 14px;
+                font-size: 10px;
+            }
+
+            .calendar-note {
+                gap: 12px;
+                padding: 24px 2px 4px;
+            }
+
+            .calendar-note>.personal-motif {
+                width: 68px;
+                height: 56px;
+            }
+
+            .calendar-note h3 {
+                font-size: 21px;
+            }
+
+            .calendar-note p {
+                font-size: 11.5px;
+            }
+
+            .day-event {
+                padding: 16px;
+                gap: 13px;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            /* seis opciones en la barra inferior: cada etiqueta necesita su ancho */
+            .bottom-nav {
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .bottom-nav a {
+                flex: 1;
+                min-width: 0;
+                padding: 0 1px;
+                letter-spacing: -.2px;
+            }
+
+            .bottom-nav a[aria-current="page"] {
+                font-weight: 600;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .calendar-card {
+                padding: 14px 6px;
+            }
+
+            .calendar-toolbar h2 {
+                font-size: 20px;
+            }
+
+            .calendar-day {
+                height: 44px;
+                font-size: 12px;
+            }
+
+            .bottom-nav {
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .bottom-nav a {
+                font-size: 9px;
+                padding: 0;
+                letter-spacing: -.2px;
+            }
+
+            .bottom-nav a[aria-current="page"] {
+                font-weight: 600;
+            }
+
+            .calendar-toolbar h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+            .sidebar {
+                display: none;
+            }
+
+            .workspace {
+                margin-left: 0;
+            }
+
+            .topbar {
+                height: 58px;
+                padding: 0 max(24px, var(--safe-right)) 0 max(24px, var(--safe-left));
+            }
+
+            .mobile-brand {
+                display: block;
+                font-family: var(--font-display);
+                font-size: 30px;
+                font-weight: 600;
+                letter-spacing: -2px;
+            }
+
+            .top-dedication {
+                margin-left: auto;
+                font-size: 9px;
+                letter-spacing: 1px;
+            }
+
+            .top-right>span,
+            .top-right>.i {
+                display: none;
+            }
+
+            .avatar {
+                margin-left: 17px;
+            }
+
+            .main {
+                max-width: 100%;
+                padding: 24px max(28px, var(--safe-right)) calc(135px + var(--safe-bottom)) max(28px, var(--safe-left));
+            }
+
+            .home-heading {
+                margin: 14px 0 22px;
+            }
+
+            .home-heading h1 {
+                font-size: 44px;
+            }
+
+            .birthday-card {
+                display: grid;
+                grid-template-columns: 1.2fr 1fr;
+                min-height: 300px;
+            }
+
+            .birthday-copy {
+                order: initial;
+                text-align: left;
+                padding: 26px;
+            }
+
+            .birthday-copy h2 {
+                font-size: 38px;
+            }
+
+            .birthday-copy h2 br {
+                display: block;
+            }
+
+            .birthday-art {
+                order: initial;
+                padding: 20px;
+            }
+
+            .logo-frame {
+                width: 160px;
+                height: 174px;
+            }
+
+            .countdown {
+                justify-content: flex-start;
+            }
+
+            .cd-cell {
+                width: 54px;
+                height: 61px;
+            }
+
+            .letter-link {
+                justify-content: flex-start;
+                width: auto;
+            }
+
+            .shortcut-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .shortcut {
+                display: block;
+                padding: 20px;
+            }
+
+            .shortcut>.row>.i {
+                display: block;
+            }
+
+            .shortcut h3 {
+                margin-top: 16px;
+                font-size: 13px;
+            }
+
+            .shortcut p {
+                font-size: 11px;
+            }
+
+            .page-heading .heading-row {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .page-heading h1 {
+                font-size: 40px;
+            }
+
+            .links-toolbar {
+                flex-wrap: nowrap;
+            }
+
+            .chips {
+                flex-basis: auto;
+                margin-right: 0;
+                padding-right: 0;
+            }
+
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                inset: auto 0 0;
+                z-index: 30;
+                justify-content: space-around;
+                gap: 8px;
+                height: calc(64px + var(--safe-bottom));
+                padding: 7px max(20px, var(--safe-right)) calc(7px + var(--safe-bottom)) max(20px, var(--safe-left));
+                background: var(--canvas);
+                border-top: 1px solid var(--lilac);
+            }
+
+            .bottom-nav a {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                flex: 1;
+                min-width: 0;
+                min-height: 44px;
+                gap: 8px;
+                padding: 0 4px;
+                border-radius: 12px;
+                color: var(--accent);
+                font-size: 11px;
+            }
+
+            .bottom-nav a[aria-current="page"] {
+                background: var(--rose);
+                color: var(--ink);
+                font-weight: 700;
+            }
+
+            .bottom-nav .i {
+                width: 20px;
+                height: 20px;
+            }
+
+            .assistant-fab {
+                right: max(24px, var(--safe-right));
+                bottom: calc(80px + var(--safe-bottom));
+                width: 48px;
+                height: 48px;
+                justify-content: center;
+                padding: 0;
+            }
+
+            .assistant-fab span {
+                display: none;
+            }
+
+            .toast {
+                bottom: calc(78px + var(--safe-bottom));
+            }
+
+            .letter-lock {
+                padding-top: 28px;
+                gap: 18px;
+            }
+
+            body.letter-mode .main {
+                padding-top: 24px;
+                padding-bottom: calc(32px + var(--safe-bottom));
+            }
+
+            .letter-view {
+                min-height: calc(100dvh - 40px);
+            }
+
+            .empty {
+                padding: 28px 12px;
+                gap: 12px;
+            }
+
+            .personal-motif-favorites>div {
+                gap: 8px;
+            }
+
+            input,
+            textarea,
+            select {
+                scroll-margin-block: 80px;
+            }
+
+            /* Hojas: centradas y bajas, con el formulario repartido en dos columnas para no tener que desplazarlo */
+            .sheet {
+                width: min(calc(100% - 40px - var(--safe-left) - var(--safe-right)), 520px);
+                max-width: none;
+                max-height: calc(100dvh - 20px);
+                margin: auto;
+                border-radius: 20px;
+            }
+
+            .sheet-inner {
+                padding: 18px 26px;
+            }
+
+            .sheet-handle {
+                display: none;
+            }
+
+            .sheet h2 {
+                font-size: 27px;
+            }
+
+            .sheet-body {
+                margin-top: 14px;
+                gap: 14px;
+            }
+
+            .input {
+                min-height: 44px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            #linkSheet,
+            #ideaDetailSheet {
+                width: min(calc(100% - 40px - var(--safe-left) - var(--safe-right)), 680px);
+            }
+
+            #linkForm,
+            #ideaDetailForm {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px 18px;
+            }
+
+            #linkForm .form-hint,
+            #linkForm .form-actions,
+            #ideaDetailForm .form-actions,
+            #ideaDetailForm .wide,
+            #ideaDetailForm .form-error,
+            #linkForm .form-error {
+                grid-column: 1 / -1;
+            }
+
+            #id-desc,
+            #if-desc {
+                height: 66px;
+            }
+        }
+
+        @media (orientation: landscape) and (max-height: 600px) {
+            .calendar-card {
+                padding: 12px 16px;
+            }
+
+            .calendar-toolbar h2 {
+                font-size: 22px;
+            }
+
+            .calendar-grid {
+                gap: 3px;
+                margin-top: 6px;
+            }
+
+            .weekday {
+                padding: 6px 0;
+            }
+
+            .calendar-day {
+                height: 40px;
+                font-size: 13px;
+                gap: 2px;
+                border-radius: 10px;
+            }
+
+            .calendar-legend {
+                margin-top: 10px;
+                padding-top: 12px;
+            }
+
+            .calendar-note {
+                padding: 16px 0 4px;
+            }
+        }
+
+        /* ---------- iPhone horizontal: la navegación pasa a un riel lateral ----------
+           En horizontal lo escaso es la altura. La barra inferior le quitaba ~64 px al contenido;
+           el riel lo deja libre y respeta la muesca (zona segura izquierda y derecha). */
+        @media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+            .workspace {
+                margin-left: calc(78px + var(--safe-left));
+            }
+
+            .topbar {
+                padding-left: 24px;
+                padding-right: max(24px, var(--safe-right));
+            }
+
+            .main {
+                padding-left: 28px;
+                padding-right: max(28px, var(--safe-right));
+                padding-bottom: calc(84px + var(--safe-bottom));
+            }
+
+            .bottom-nav {
+                inset: 0 auto 0 0;
+                width: calc(78px + var(--safe-left));
+                height: auto;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: stretch;
+                gap: 3px;
+                padding: 8px 6px calc(8px + var(--safe-bottom)) calc(6px + var(--safe-left));
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                border-top: 0;
+                border-right: 1px solid color-mix(in srgb, var(--lilac) 70%, transparent);
+            }
+
+            .bottom-nav a {
+                flex: 0 0 auto;
+                flex-direction: column;
+                gap: 3px;
+                min-height: 46px;
+                padding: 5px 2px;
+                font-size: 10px;
+                line-height: 1.2;
+                text-align: center;
+            }
+
+            .bottom-nav .i {
+                width: 20px;
+                height: 20px;
+            }
+
+            .assistant-fab {
+                bottom: calc(18px + var(--safe-bottom));
+            }
+
+            .toast {
+                bottom: calc(20px + var(--safe-bottom));
+                left: calc(50% + 39px);
+            }
+
+            body.letter-mode .workspace {
+                margin-left: 0;
+            }
+
+            body.letter-mode .main {
+                padding-left: max(28px, var(--safe-left));
+                padding-right: max(28px, var(--safe-right));
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
 
             *,
@@ -1684,9 +3598,22 @@
                 <path d="M12 17v6" />
             </symbol>
             <!-- Destello de cuatro puntas (reemplaza el glifo ✧ del Figma, que en iOS se dibuja distinto según la fuente) -->
+            <symbol id="i-wallet" viewBox="0 0 24 24">
+                <path d="M20 8V5a2 2 0 0 0-2-2L5 6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h15V8H5a2 2 0 0 1 0-4" />
+                <path d="M20 12h-5v5h5m-4-2.5h.1" />
+            </symbol>
             <symbol id="i-star" viewBox="0 0 24 24">
                 <path
                     d="M12 1.5C12.9 8.2 15.8 11.1 22.5 12 15.8 12.9 12.9 15.8 12 22.5 11.1 15.8 8.2 12.9 1.5 12 8.2 11.1 11.1 8.2 12 1.5Z" />
+            </symbol>
+            <symbol id="i-edit" viewBox="0 0 24 24">
+                <path d="m5 19 1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L9 18Zm9.5-12.5 3 3" />
+            </symbol>
+            <symbol id="i-trash" viewBox="0 0 24 24">
+                <path d="M4 7h16M10 4h4M6 7l1 13h10l1-13M10 11v5m4-5v5" />
+            </symbol>
+            <symbol id="i-down" viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6" />
             </symbol>
         </defs>
     </svg>
@@ -1714,6 +3641,9 @@
                 <a class="nav-item" href="#/espacio" data-nav="espacio"><svg class="i" aria-hidden="true">
                         <use href="#i-book" />
                     </svg><span>Espacio</span><span class="nav-dot"></span></a>
+                <a class="nav-item" href="#/dinero" data-nav="dinero"><svg class="i" aria-hidden="true">
+                        <use href="#i-wallet" />
+                    </svg><span>Mi dinero</span><span class="nav-dot"></span></a>
             </nav>
             <div class="sidebar-bottom">
                 <svg class="i" style="width:34px;height:34px" aria-hidden="true">
@@ -1807,8 +3737,14 @@
                                 <use href="#i-star" />
                             </svg>
                             <div class="rise" style="--n:0">
-                                <div class="logo-frame"><img src="img/logo.jpg" width="720" height="720"
-                                        alt="V&amp;J: monograma con dos gatos, un capibara y flores" decoding="async">
+                                <div class="personal-motif-logo-scene">
+                                    <div class="logo-frame"><img src="img/logo.jpg" width="720" height="720"
+                                            alt="V&amp;J: monograma con dos gatos, un capibara y flores"
+                                            decoding="async"></div>
+                                    <svg class="personal-motif personal-motif-logo-lily" data-motif="lily"
+                                        viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
+                                    <svg class="personal-motif personal-motif-logo-cats" data-motif="cats"
+                                        viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
                                 </div>
                             </div>
                             <svg class="i art-star star-two" aria-hidden="true">
@@ -1834,7 +3770,7 @@
                                     <use href="#i-arrow" />
                                 </svg></div>
                             <h3>Tu bóveda</h3>
-                            <p>Eso que te inspira, en un solo lugar.</p><span class="shortcut-meta" data-meta="links">3
+                            <p>Eso que te inspira, en un solo lugar.</p><span class="shortcut-meta" data-meta="links">2
                                 tesoros guardados</span>
                         </a>
                         <a class="shortcut shortcut-1 pressable" href="#/ideas">
@@ -1859,6 +3795,28 @@
                         </a>
                     </section>
 
+                    <section class="personal-motif-favorites" aria-label="Pequeñas cosas que se parecen a ti">
+                        <p>Pequeñas cosas <i>que se parecen a ti.</i></p>
+                        <div>
+                            <figure><svg class="personal-motif personal-motif--volley" data-motif="volley"
+                                    viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
+                                <figcaption>Un buen saque</figcaption>
+                            </figure>
+                            <figure><svg class="personal-motif personal-motif--padel" data-motif="padel"
+                                    viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
+                                <figcaption>Un partido más</figcaption>
+                            </figure>
+                            <figure><svg class="personal-motif personal-motif--nails" data-motif="nails"
+                                    viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
+                                <figcaption>Color en las manos</figcaption>
+                            </figure>
+                            <figure><svg class="personal-motif personal-motif--create" data-motif="create"
+                                    viewBox="0 0 160 120" fill="none" aria-hidden="true" focusable="false"></svg>
+                                <figcaption>Una idea nueva</figcaption>
+                            </figure>
+                        </div>
+                    </section>
+
                     <div class="home-footer">
                         <svg class="i" aria-hidden="true">
                             <use href="#i-heart" />
@@ -1867,6 +3825,176 @@
                     </div>
                 </section>
 
+                <!-- ===================== CARTA ===================== -->
+                <section class="page" data-page="carta" hidden aria-label="Tu carta">
+                    <div class="letter-view">
+                        <a class="text-button" href="#/inicio"><svg class="i" style="width:18px;height:18px"
+                                aria-hidden="true">
+                                <use href="#i-back" />
+                            </svg>Volver a mi espacio</a>
+                        <span class="letter-brand" aria-hidden="true">V&amp;J</span>
+
+                        <!-- Antes de la fecha -->
+                        <div class="letter-lock" data-letter="locked" hidden>
+                            <svg class="i" style="width:36px;height:36px" aria-hidden="true">
+                                <use href="#i-lock" />
+                            </svg>
+                            <span class="page-eyebrow">Hay cosas que vale la pena esperar</span>
+                            <h1>Para ti.<br><i>Cuando llegue el día.</i></h1>
+                            <p>Esta carta está guardada con mucho cariño.<br>Se abre el 15 de noviembre de 2026,<br>a
+                                las 00:00 en Caracas.</p>
+                            <span class="pill"><svg class="i" style="width:15px;height:15px" aria-hidden="true">
+                                    <use href="#i-calendar" />
+                                </svg>15 · 11 · 2026</span>
+                        </div>
+
+                        <!-- Ya es el día: pide el código -->
+                        <form class="letter-lock" id="pinForm" data-letter="pin" hidden novalidate autocomplete="off">
+                            <svg class="i" style="width:36px;height:36px" aria-hidden="true">
+                                <use href="#i-lock" />
+                            </svg>
+                            <span class="page-eyebrow">Ya es el día</span>
+                            <h1>Para ti.<br><i>Ya puedes abrirla.</i></h1>
+                            <p>Escribe tu código de seis dígitos<br>para abrir la carta.</p>
+                            <div class="pin-area" id="pinArea">
+                                <label class="pin-label" for="pin">Tu código de seis dígitos</label>
+                                <div class="pin-field" id="pinField">
+                                    <input id="pin" class="pin-input" type="text" inputmode="numeric" pattern="[0-9]*"
+                                        maxlength="6" autocomplete="off" autocapitalize="off" spellcheck="false"
+                                        aria-describedby="pinError" aria-invalid="false">
+                                    <span class="pin-box" aria-hidden="true"></span><span class="pin-box"
+                                        aria-hidden="true"></span><span class="pin-box" aria-hidden="true"></span><span
+                                        class="pin-box" aria-hidden="true"></span><span class="pin-box"
+                                        aria-hidden="true"></span><span class="pin-box" aria-hidden="true"></span>
+                                </div>
+                                <p class="pin-error" id="pinError" role="alert"></p>
+                                <button class="button letter-btn" id="pinBtn" type="submit"
+                                    disabled>Desbloquear</button>
+                            </div>
+                        </form>
+
+                        <!-- Carta abierta (el texto se escribe aquí solo después de descifrar) -->
+                        <article class="letter-open" data-letter="open" hidden aria-labelledby="letterTitle">
+                            <p class="letter-date" id="letterDate"></p>
+                            <h1 id="letterTitle" tabindex="-1"></h1>
+                            <p class="letter-greeting" id="letterGreeting"></p>
+                            <div class="letter-body" id="letterBody"></div>
+                            <p class="letter-sign" id="letterSign"></p>
+                            <a class="button letter-btn ghost" href="#/inicio">Volver a mi espacio</a>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- ===================== LINKS · Tu bóveda de inspiración ===================== -->
+                <section class="page" data-page="links" aria-labelledby="links-title" hidden>
+                    <div class="page-heading">
+                        <div class="personal-motif-eyebrow-row">
+                            <span class="page-eyebrow"><span class="tiny-line"></span>Pequeños hallazgos</span>
+                            <svg class="personal-motif personal-motif--nails" data-motif="nails" viewBox="0 0 160 120"
+                                fill="none" aria-hidden="true" focusable="false"></svg>
+                        </div>
+                        <div class="row spread heading-row">
+                            <div>
+                                <h1 id="links-title">Tu bóveda <i>de inspiración.</i></h1>
+                                <p>Guarda eso que quieres probar. Vuelve cuando llegue la chispa.</p>
+                            </div>
+                            <button class="button" id="addLinkBtn" type="button" aria-haspopup="dialog"><svg class="i"
+                                    aria-hidden="true">
+                                    <use href="#i-plus" />
+                                </svg>Añadir enlace</button>
+                        </div>
+                    </div>
+
+                    <div class="links-toolbar">
+                        <div class="chips" id="linkChips" role="group" aria-label="Filtrar por sección"></div>
+                        <button class="link-text-btn" id="addSectionBtn" type="button" aria-haspopup="dialog"><svg
+                                class="i" aria-hidden="true">
+                                <use href="#i-plus" />
+                            </svg>Nueva sección</button>
+                    </div>
+
+                    <div class="links-list" id="linkList"></div>
+                </section>
+
+                <!-- ===================== IDEAS · De idea a plan ===================== -->
+                <section class="page" data-page="ideas" aria-labelledby="ideas-title" hidden>
+                    <div class="page-heading">
+                        <div class="personal-motif-eyebrow-row">
+                            <span class="page-eyebrow"><span class="tiny-line"></span>Deja que crezca</span>
+                            <svg class="personal-motif personal-motif--create" data-motif="create" viewBox="0 0 160 120"
+                                fill="none" aria-hidden="true" focusable="false"></svg>
+                        </div>
+                        <div class="row spread heading-row">
+                            <div>
+                                <h1 id="ideas-title">De idea <i>a plan.</i></h1>
+                                <p>Un lugar para esas ideas que no te dejan de dar vueltas.</p>
+                            </div>
+                            <button class="button" id="addIdeaBtn" type="button" aria-haspopup="dialog"><svg class="i"
+                                    aria-hidden="true">
+                                    <use href="#i-plus" />
+                                </svg>Nueva idea</button>
+                        </div>
+                    </div>
+
+                    <div class="segments" id="ideaTabs" role="group" aria-label="Estado de tus ideas"></div>
+                    <div class="ideas-list" id="ideaList" aria-live="polite"></div>
+                    <p class="quiet-note">Tus ideas se guardan en este dispositivo.</p>
+                </section>
+
+                <!-- ===================== CALENDARIO · Tus días bonitos ===================== -->
+                <section class="page" data-page="calendario" aria-labelledby="cal-title" hidden>
+                    <div class="page-heading">
+                        <span class="page-eyebrow"><span class="tiny-line"></span>Un día a la vez</span>
+                        <div class="row spread heading-row">
+                            <div>
+                                <h1 id="cal-title">Tus días <i>bonitos.</i></h1>
+                                <p>Un poquito de orden para dejarle espacio a la magia.</p>
+                            </div>
+                            <button class="button" id="addEventBtn" type="button" aria-haspopup="dialog"><svg class="i"
+                                    aria-hidden="true">
+                                    <use href="#i-plus" />
+                                </svg>Añadir evento</button>
+                        </div>
+                    </div>
+
+                    <section class="calendar-card" aria-label="Calendario mensual">
+                        <div class="row spread calendar-toolbar">
+                            <h2 id="calMonth" aria-live="polite"></h2>
+                            <div class="row">
+                                <button class="chip" id="calToday" type="button">Hoy</button>
+                                <button class="icon-button" id="calPrev" type="button" aria-label="Mes anterior"><svg
+                                        class="i" aria-hidden="true">
+                                        <use href="#i-back" />
+                                    </svg></button>
+                                <button class="icon-button" id="calNext" type="button" aria-label="Mes siguiente"><svg
+                                        class="i" aria-hidden="true">
+                                        <use href="#i-chevron" />
+                                    </svg></button>
+                            </div>
+                        </div>
+                        <div class="calendar-grid" id="calGrid"></div>
+                        <div class="calendar-legend" aria-label="Categorías">
+                            <span><i class="dot rose"></i>Video</span>
+                            <span><i class="dot lilac"></i>Plan</span>
+                            <span><svg class="i" aria-hidden="true">
+                                    <use href="#i-heart" />
+                                </svg>Cumpleaños</span>
+                            <span><i class="dot olive"></i>Recordatorio</span>
+                        </div>
+                    </section>
+
+                    <div class="calendar-note">
+                        <svg class="personal-motif personal-motif--sports" data-motif="sports" viewBox="0 0 160 120"
+                            fill="none" aria-hidden="true" focusable="false"></svg>
+                        <div>
+                            <h3>Hay días que merecen una estrellita.</h3>
+                            <p>El 15 de noviembre es uno de ellos.</p>
+                            <p>También hay espacio para jugar, moverte y volver a ti.</p>
+                        </div>
+                    </div>
+                    <p class="quiet-note">Tus eventos se guardan en este dispositivo. Las ideas con fecha aparecen
+                        solas.</p>
+                </section>
                 <!-- Las demás pantallas se generan abajo (andamio) y se reemplazan en cada entrega -->
             </main>
 
@@ -1892,6 +4020,9 @@
                 <a href="#/espacio" data-nav="espacio"><svg class="i" aria-hidden="true">
                         <use href="#i-book" />
                     </svg><span>Espacio</span></a>
+                <a href="#/dinero" data-nav="dinero"><svg class="i" aria-hidden="true">
+                        <use href="#i-wallet" />
+                    </svg><span>Mi dinero</span></a>
             </nav>
         </div>
 
@@ -1918,12 +4049,262 @@
                 </div>
             </div>
         </dialog>
+
+        <!-- Hoja: añadir / editar enlace -->
+        <dialog class="sheet" id="linkSheet" aria-labelledby="linkSheetTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="linkSheetTitle">Un nuevo tesoro</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <form class="sheet-body" id="linkForm" novalidate>
+                    <div class="field">
+                        <label for="lf-title">¿Cómo lo llamamos?</label>
+                        <input class="input" id="lf-title" type="text" maxlength="80" placeholder="Un hallazgo bonito"
+                            autocomplete="off" enterkeyhint="next">
+                    </div>
+                    <div class="field">
+                        <label for="lf-url">Enlace</label>
+                        <input class="input" id="lf-url" type="url" inputmode="url" autocapitalize="off"
+                            autocorrect="off" spellcheck="false" placeholder="https://" autocomplete="off"
+                            aria-describedby="lf-url-err" enterkeyhint="done">
+                        <p class="form-error" id="lf-url-err" role="alert" hidden></p>
+                    </div>
+                    <div class="field">
+                        <label for="lf-section">Sección</label>
+                        <div class="select-wrap"><select class="input" id="lf-section"></select><svg class="i"
+                                aria-hidden="true">
+                                <use href="#i-down" />
+                            </svg></div>
+                    </div>
+                    <div class="field">
+                        <label for="lf-note">Una nota (opcional)</label>
+                        <textarea class="input" id="lf-note" rows="1" maxlength="240"
+                            placeholder="Para cuando vuelva a verlo..."></textarea>
+                    </div>
+                    <p class="form-hint">Se guarda en este dispositivo, solo para ti.</p>
+                    <div class="form-actions">
+                        <button class="button button-ghost" type="button" data-close>Cancelar</button>
+                        <button class="button" type="submit" id="lfSubmit">Guardar enlace</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <!-- Hoja: nueva sección de Links -->
+        <dialog class="sheet" id="sectionSheet" aria-labelledby="sectionSheetTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="sectionSheetTitle">Una sección muy tuya</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <form class="sheet-body" id="sectionForm" novalidate>
+                    <div class="field">
+                        <label for="sf-name">Nombre de la sección</label>
+                        <input class="input" id="sf-name" type="text" maxlength="24"
+                            placeholder="Por ejemplo: Lugares por conocer" autocomplete="off" aria-describedby="sf-err"
+                            enterkeyhint="done">
+                        <p class="form-error" id="sf-err" role="alert" hidden></p>
+                    </div>
+                    <p class="form-hint">Un rinconcito para cada tipo de inspiración.</p>
+                    <div class="form-actions">
+                        <button class="button button-ghost" type="button" data-close>Cancelar</button>
+                        <button class="button" type="submit">Crear sección</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <!-- Hoja: idea nueva -->
+        <dialog class="sheet" id="ideaSheet" aria-labelledby="ideaSheetTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="ideaSheetTitle">Dale espacio a una idea</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <form class="sheet-body" id="ideaForm" novalidate>
+                    <div class="field">
+                        <label for="if-title">Esa idea que tienes</label>
+                        <input class="input" id="if-title" type="text" maxlength="90"
+                            placeholder="Todo empieza por una frase..." autocomplete="off" aria-describedby="if-err"
+                            enterkeyhint="next">
+                    </div>
+                    <div class="field">
+                        <label for="if-desc">Cuéntate un poquito más</label>
+                        <textarea class="input" id="if-desc" rows="4" maxlength="600"
+                            placeholder="Sin editar, sin pensarlo demasiado."></textarea>
+                    </div>
+                    <p class="form-error" id="if-err" role="alert" hidden></p>
+                    <button class="button" type="submit">Guardar mi idea <svg class="i" aria-hidden="true">
+                            <use href="#i-heart" />
+                        </svg></button>
+                </form>
+            </div>
+        </dialog>
+
+        <!-- Hoja: una idea con posibilidades (editar, mover, quitar) -->
+        <dialog class="sheet" id="ideaDetailSheet" aria-labelledby="ideaDetailTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="ideaDetailTitle">Una idea con posibilidades</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <form class="sheet-body" id="ideaDetailForm" novalidate>
+                    <div class="field">
+                        <label for="id-title">Tu idea</label>
+                        <input class="input" id="id-title" type="text" maxlength="90" autocomplete="off"
+                            aria-describedby="id-err">
+                    </div>
+                    <div class="field">
+                        <label for="id-tag">Etiqueta</label>
+                        <input class="input" id="id-tag" type="text" maxlength="24" list="ideaTagList"
+                            placeholder="Reel, Carrusel, Lifestyle..." autocomplete="off">
+                        <datalist id="ideaTagList">
+                            <option value="Lifestyle">
+                            <option value="Reel">
+                            <option value="Carrusel">
+                            <option value="Video">
+                            <option value="Foto">
+                            <option value="Historia">
+                        </datalist>
+                    </div>
+                    <div class="field wide">
+                        <label for="id-desc">Cuéntate un poquito más</label>
+                        <textarea class="input" id="id-desc" rows="4" maxlength="600"
+                            placeholder="Sin editar, sin pensarlo demasiado."></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="id-date">Fecha en tu calendario (opcional)</label>
+                        <input class="input" id="id-date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="id-status">Mover a…</label>
+                        <div class="select-wrap"><select class="input" id="id-status">
+                                <option>Ideas</option>
+                                <option>En proceso</option>
+                                <option>Finalizado</option>
+                            </select><svg class="i" aria-hidden="true">
+                                <use href="#i-down" />
+                            </svg></div>
+                    </div>
+                    <p class="form-error" id="id-err" role="alert" hidden></p>
+                    <div class="form-actions">
+                        <button class="button button-ghost" type="button" id="ideaDeleteBtn">Quitar idea</button>
+                        <button class="button" type="submit">Guardar cambios</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+
+        <!-- Hoja: los eventos de un día -->
+        <dialog class="sheet" id="daySheet" aria-labelledby="dayTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="dayTitle">Un día</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <div class="sheet-body">
+                    <div class="day-events" id="dayList"></div>
+                    <p class="quiet-note">Hora local de Caracas.</p>
+                    <button class="button" type="button" id="dayAddBtn"><svg class="i" aria-hidden="true">
+                            <use href="#i-plus" />
+                        </svg>Añadir evento</button>
+                </div>
+            </div>
+        </dialog>
+
+        <!-- Hoja: crear o editar un evento -->
+        <dialog class="sheet" id="eventSheet" aria-labelledby="eventSheetTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <div class="row spread">
+                    <h2 id="eventSheetTitle">Algo bonito en tu calendario</h2>
+                    <button class="icon-button" type="button" data-close aria-label="Cerrar"><svg class="i"
+                            aria-hidden="true">
+                            <use href="#i-close" />
+                        </svg></button>
+                </div>
+                <form class="sheet-body" id="eventForm" novalidate>
+                    <div class="field">
+                        <label for="ev-title">¿Qué vamos a hacer?</label>
+                        <input class="input" id="ev-title" type="text" maxlength="90" placeholder="Un ratito para crear"
+                            autocomplete="off" aria-describedby="ev-err" enterkeyhint="next">
+                    </div>
+                    <p class="sheet-note" id="ev-link" hidden>Este día viene de una de tus ideas. Si cambias el título o
+                        la fecha, cambian en las dos partes. <button class="text-link" type="button" id="evOpenIdea">Ver
+                            la idea</button></p>
+                    <div class="field">
+                        <label for="ev-date">Fecha</label>
+                        <input class="input" id="ev-date" type="date" aria-describedby="ev-err">
+                    </div>
+                    <div class="field" id="ev-time-field">
+                        <label for="ev-time">Hora (vacía para todo el día)</label>
+                        <input class="input" id="ev-time" type="time">
+                    </div>
+                    <div class="field" id="ev-cat-field">
+                        <label for="ev-cat">Categoría</label>
+                        <div class="select-wrap"><select class="input" id="ev-cat">
+                                <option>Video</option>
+                                <option>Plan</option>
+                                <option>Cumpleaños</option>
+                                <option>Recordatorio</option>
+                            </select><svg class="i" aria-hidden="true">
+                                <use href="#i-down" />
+                            </svg></div>
+                    </div>
+                    <p class="quiet-note">Hora local de Caracas.</p>
+                    <p class="form-error" id="ev-err" role="alert" hidden></p>
+                    <div class="form-actions">
+                        <button class="button button-ghost" type="button" id="evDeleteBtn" hidden>Quitar</button>
+                        <button class="button" type="submit" id="evSubmit">Confirmar evento <svg class="i"
+                                aria-hidden="true">
+                                <use href="#i-check" />
+                            </svg></button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
+        <!-- Hoja: confirmar (quitar un enlace, una idea o una sección vacía) -->
+        <dialog class="sheet" id="confirmSheet" aria-labelledby="confirmTitle">
+            <div class="sheet-inner">
+                <div class="sheet-handle"></div>
+                <h2 id="confirmTitle">¿Quitar este hallazgo?</h2>
+                <form class="sheet-body" method="dialog">
+                    <p id="confirmText"></p>
+                    <div class="form-actions">
+                        <button class="button button-ghost" value="cancel">Mejor no</button>
+                        <button class="button" value="ok" id="confirmOk">Quitar</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
     </div>
 
     <noscript>
         <p style="padding:24px;font-family:system-ui">Para abrir tu espacio necesitas activar JavaScript.</p>
     </noscript>
 
+    <script src="lib/crypto.js"></script>
     <script>
         (() => {
             'use strict';
@@ -1945,12 +4326,10 @@
 
             /* ---------- Pantallas (andamio de las que aún no se entregan) ---------- */
             const SCAFFOLD = {
-                links: { eyebrow: 'Pequeños hallazgos', title: 'Tu bóveda', italic: 'de inspiración.', text: 'Guarda eso que quieres probar. Vuelve cuando llegue la chispa.' },
-                ideas: { eyebrow: 'Deja que crezca', title: 'De idea', italic: 'a plan.', text: 'Un lugar para esas ideas que no te dejan de dar vueltas.' },
-                calendario: { eyebrow: 'Un día a la vez', title: 'Tus días', italic: 'bonitos.', text: 'Un poquito de orden para dejarle espacio a la magia.' },
+                dinero: { eyebrow: 'Un poquito de orden, mucha calma', title: 'Mi', italic: 'dinero.', text: 'Para disfrutar hoy. Y cuidar lo que viene.' },
                 espacio: { eyebrow: 'Vuelve a ti', title: 'Tu pequeño', italic: 'espacio.', text: 'Para vaciar la mente, guardar palabras y empezar de nuevo.' }
             };
-            const PAGES = ['inicio', ...Object.keys(SCAFFOLD)];
+            const PAGES = ['inicio', 'carta', 'links', 'ideas', 'calendario', ...Object.keys(SCAFFOLD)];
             const main = $('#main');
 
             Object.entries(SCAFFOLD).forEach(([id, s]) => {
@@ -1981,6 +4360,9 @@
                 $$('[data-nav]').forEach((a) => {
                     if (a.dataset.nav === page) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
                 });
+                document.body.classList.toggle('letter-mode', page === 'carta');
+                themeMeta.setAttribute('content', page === 'carta' ? '#2F2A33' : '#FFF1D7');
+                if (page === 'carta') enterLetter(); else leaveLetter();
                 if (!firstRender) { window.scrollTo(0, 0); main.focus({ preventScroll: true }); }
                 firstRender = false;
             }
@@ -2023,8 +4405,9 @@
                 group.hidden = isReady;
                 $('#bday-title-ready').parentElement.hidden = !isReady;
                 $('.birthday-card').setAttribute('aria-labelledby', isReady ? 'bday-title-ready' : 'bday-title');
-                $('#letterText').textContent = isReady ? 'Abrir mi carta' : 'Tu carta se abre el 15 de noviembre';
+                $('#letterText').textContent = isReady ? (letterSeen() ? 'Volver a leer tu carta' : 'Abrir mi carta') : 'Tu carta se abre el 15 de noviembre';
                 $('use', $('#letterBtn')).setAttribute('href', isReady ? '#i-heart' : '#i-lock');
+                if (currentPage() === 'carta') enterLetter(); // el día llegó mientras estaba en la pantalla de la carta
             }
 
             function update() {
@@ -2059,11 +4442,7 @@
             document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
 
             /* ---------- Botones ---------- */
-            $('#letterBtn').addEventListener('click', () => {
-                toast(ready
-                    ? 'Aquí se abrirá tu carta. Esa pantalla llega en la próxima entrega.'
-                    : 'Tu carta se abre el 15 de noviembre de 2026, a las 00:00 en Caracas.');
-            });
+            $('#letterBtn').addEventListener('click', () => { location.hash = '#/carta'; });
             $('#fab').addEventListener('click', () => toast('Tu cómplice creativa llega muy pronto.'));
 
             const sheet = $('#aboutSheet');
@@ -2072,6 +4451,993 @@
             sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); }); // clic en el velo
             sheet.addEventListener('close', () => aboutBtn.focus());
 
+            /* ---------------------------------------------------------
+               CARTA: código de 6 dígitos + descifrado (Web Crypto)
+               - El texto de la carta NO está en este archivo: viene cifrado en data/carta.enc.json.
+               - Código incorrecto => el descifrado falla y no se muestra nada.
+               - Tras abrirla una vez, la clave (no el código ni el texto) se guarda en este teléfono
+                 como CryptoKey NO exportable, para poder releerla sin escribir el código otra vez.
+               --------------------------------------------------------- */
+            const themeMeta = $('#themeColor');
+            const pinForm = $('#pinForm'), pinInput = $('#pin'), pinArea = $('#pinArea'), pinField = $('#pinField');
+            const pinBoxes = $$('.pin-box'), pinError = $('#pinError'), pinBtn = $('#pinBtn');
+            const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+            let envelopePromise = null;
+            let opening = false;
+            let confettiEl = null, confettiTimer = null;
+
+            function isReady() { return Date.now() >= UNLOCK_AT; }
+            function letterSeen() { try { return localStorage.getItem('vj-carta-vista') === '1'; } catch (_) { return false; } }
+            function showLetterState(name) { $$('[data-letter]').forEach((el) => { el.hidden = el.dataset.letter !== name; }); }
+
+            const KeyStore = {
+                open() {
+                    return new Promise((res, rej) => {
+                        const r = indexedDB.open('vj', 1);
+                        r.onupgradeneeded = () => r.result.createObjectStore('keys');
+                        r.onsuccess = () => res(r.result);
+                        r.onerror = () => rej(r.error);
+                    });
+                },
+                async run(mode, fn) {
+                    const db = await this.open();
+                    return new Promise((res, rej) => {
+                        const req = fn(db.transaction('keys', mode).objectStore('keys'));
+                        req.onsuccess = () => res(req.result);
+                        req.onerror = () => rej(req.error);
+                    });
+                },
+                get(k) { return this.run('readonly', (s) => s.get(k)); },
+                set(k, v) { return this.run('readwrite', (s) => s.put(v, k)); },
+                del(k) { return this.run('readwrite', (s) => s.delete(k)); }
+            };
+
+            function loadEnvelope() {
+                if (!envelopePromise) {
+                    envelopePromise = fetch('data/carta.enc.json', { cache: 'no-cache' })
+                        .then((r) => { if (!r.ok) throw new Error('FETCH'); return r.json(); })
+                        .then((env) => { if (!VJCrypto.validate(env)) throw new Error('FORMAT'); return env; })
+                        .catch((e) => { envelopePromise = null; throw e; });
+                }
+                return envelopePromise;
+            }
+
+            function renderPin() {
+                const v = pinInput.value;
+                pinBoxes.forEach((b, i) => {
+                    b.textContent = v[i] ? '•' : '';
+                    b.classList.toggle('is-active', i === Math.min(v.length, 5));
+                });
+                pinBtn.disabled = v.length !== 6 || opening;
+            }
+            function setPinError(msg) {
+                pinError.textContent = msg || '';
+                pinField.classList.toggle('is-error', !!msg);
+                pinInput.setAttribute('aria-invalid', msg ? 'true' : 'false');
+            }
+            function resetPin() {
+                pinInput.value = ''; setPinError(''); pinArea.classList.remove('is-success');
+                pinBtn.textContent = 'Desbloquear'; renderPin();
+            }
+            pinInput.addEventListener('input', () => {
+                pinInput.value = pinInput.value.replace(/\D/g, '').slice(0, 6); // solo dígitos, también al pegar
+                if (pinError.textContent) setPinError('');
+                renderPin();
+            });
+            pinInput.addEventListener('focus', renderPin);
+
+            async function enterLetter() {
+                clearConfetti();
+                if (!isReady()) { showLetterState('locked'); return; }
+                if (letterSeen()) {
+                    showLetterState(''); // breve pausa mientras intenta abrir con la clave guardada
+                    try {
+                        const env = await loadEnvelope();
+                        const saved = await KeyStore.get('carta');
+                        if (saved && saved.key && saved.salt === env.salt) {
+                            const data = await VJCrypto.decryptWithKey(saved.key, env);
+                            if (currentPage() === 'carta') openLetter(data, false);
+                            return;
+                        }
+                    } catch (_) { try { await KeyStore.del('carta'); } catch (__) { } }
+                    if (currentPage() !== 'carta') return;
+                }
+                resetPin();
+                showLetterState('pin');
+            }
+
+            function leaveLetter() {
+                clearConfetti();
+                ['letterDate', 'letterTitle', 'letterGreeting', 'letterSign'].forEach((id) => { $('#' + id).textContent = ''; });
+                $('#letterBody').replaceChildren(); // el texto descifrado no se queda en la página al salir
+                pinInput.value = '';
+            }
+
+            function openLetter(data, celebrate) {
+                const str = (x) => (typeof x === 'string' ? x : '');
+                const paras = Array.isArray(data && data.paragraphs) ? data.paragraphs.map(str).filter(Boolean) : [];
+                $('#letterDate').textContent = str(data.date);
+                $('#letterDate').hidden = !str(data.date);
+                $('#letterTitle').textContent = str(data.title) || 'Para ti';
+                $('#letterGreeting').textContent = str(data.greeting);
+                $('#letterGreeting').hidden = !str(data.greeting);
+                $('#letterBody').replaceChildren(...paras.map((t) => Object.assign(document.createElement('p'), { textContent: t })));
+                $('#letterSign').textContent = str(data.signature);
+                $('#letterSign').hidden = !str(data.signature);
+                showLetterState('open');
+                window.scrollTo(0, 0);
+                $('#letterTitle').focus({ preventScroll: true });
+                $('#letterText').textContent = 'Volver a leer tu carta';
+                if (celebrate && !reducedMotion()) confetti();
+            }
+
+            pinForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (opening || pinInput.value.length !== 6) return;
+                opening = true; setPinError(''); pinBtn.textContent = 'Abriendo…'; renderPin();
+                try {
+                    const env = await loadEnvelope();
+                    const key = await VJCrypto.deriveKey(pinInput.value, env.salt, env.iter, ['decrypt']);
+                    const data = await VJCrypto.decryptWithKey(key, env); // lanza OperationError si el código es incorrecto
+                    try { await KeyStore.set('carta', { key, salt: env.salt }); localStorage.setItem('vj-carta-vista', '1'); } catch (_) { /* si no se puede guardar, pedirá el código la próxima vez */ }
+                    pinArea.classList.add('is-success');
+                    await wait(reducedMotion() ? 0 : 480);
+                    openLetter(data, true);
+                } catch (err) {
+                    const name = err && err.name, msg = err && err.message;
+                    if (name === 'OperationError') setPinError('Ese código no coincide. Inténtalo otra vez.');
+                    else if (msg === 'NO_SUBTLE') setPinError('Este navegador no puede abrir la carta. Prueba desde Safari.');
+                    else setPinError('No pude abrir la carta ahora. Revisa tu conexión e inténtalo otra vez.');
+                    pinBtn.textContent = 'Desbloquear';
+                    pinInput.focus();
+                } finally {
+                    opening = false; renderPin();
+                }
+            });
+
+            /* Confeti tenue: máximo 24 piezas, ~3 s, solo al abrir la carta por primera vez */
+            function confetti() {
+                clearConfetti();
+                const colors = ['#FFF1D7', '#EBD8D2', '#CBB6C7'];
+                confettiEl = document.createElement('div');
+                confettiEl.className = 'confetti';
+                confettiEl.setAttribute('aria-hidden', 'true');
+                for (let i = 0; i < 24; i++) {
+                    const p = document.createElement('i');
+                    const w = 6 + Math.random() * 5;
+                    p.style.cssText = '--c:' + colors[i % 3] + ';--w:' + w.toFixed(1) + 'px;--h:' + (w * (Math.random() < .5 ? 1 : 1.8)).toFixed(1) + 'px;--r:' + (Math.random() < .5 ? '50%' : '2px') +
+                        ';--d:' + (2 + Math.random() * .7).toFixed(2) + 's;--delay:' + (Math.random() * .4).toFixed(2) + 's;--x:' + Math.round(-70 + Math.random() * 140) + 'px;--rot:' + Math.round(180 + Math.random() * 360) + 'deg;left:' + (Math.random() * 100).toFixed(1) + '%';
+                    confettiEl.append(p);
+                }
+                document.body.append(confettiEl);
+                confettiTimer = setTimeout(clearConfetti, 3400);
+            }
+            function clearConfetti() {
+                clearTimeout(confettiTimer);
+                if (confettiEl) { confettiEl.remove(); confettiEl = null; }
+            }
+
+            /* ---------------------------------------------------------
+               Detalles de su mundo: gatitos, lirios y gustos de Verónika.
+               Ilustraciones propias en SVG, sin imágenes externas. Son decorativas
+               (aria-hidden, sin clics) y toman los colores de la paleta.
+               --------------------------------------------------------- */
+            const MOTIFS = {
+                "cats": "<g transform=\"translate(0 4) scale(.83)\"><g stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><path d=\"M53 104C20 110 11 93 24 86c9-5 16 4 10 8\" fill=\"none\"/><path d=\"M39 69c-10 12-12 29-7 35 7 5 35 4 39-2 5-8 0-28-7-36\" style=\"fill:var(--ink)\"/><path d=\"m29 46 2-25 17 12q8-2 16 0l16-14-1 28c8 24-1 34-24 34-22 0-34-12-26-35Z\" style=\"fill:var(--ink)\"/><path d=\"m35 33 2 10 7-4m25-3 6-5-1 12\" fill=\"none\" stroke-width=\"1.3\" style=\"stroke:var(--rose)\"/><path d=\"m39 58 6-1m18 0 6 1\" stroke-width=\"2.3\" style=\"stroke:var(--canvas)\"/><path d=\"m52 64 3 2 3-2m-3 3v3m-18-3-13-2m13 7-14 2m50-7 13-2m-13 7 14 2\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--rose)\"/><path d=\"m48 88-1 17m12-17 2 17\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--lilac)\"/></g></g><g transform=\"translate(65 9) scale(.83)\"><g stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><path d=\"M53 104C20 110 11 93 24 86c9-5 16 4 10 8\" fill=\"none\"/><path d=\"M39 69c-10 12-12 29-7 35 7 5 35 4 39-2 5-8 0-28-7-36\" style=\"fill:var(--canvas)\"/><path d=\"M39 69q13-9 25-3l5 27-13 9-8-18-12 8Z\" style=\"fill:var(--ink)\"/><path d=\"m29 46 2-25 17 12q8-2 16 0l16-14-1 28c8 24-1 34-24 34-22 0-34-12-26-35Z\" style=\"fill:var(--canvas)\"/><path d=\"m30 46 1-25 17 12 4 17-9 9Z\" style=\"fill:var(--ink)\"/><path d=\"m64 33 16-14-1 28-13 12-7-9Z\" style=\"fill:var(--ink)\"/><path d=\"m35 33 2 10 7-4m25-3 6-5-1 12\" fill=\"none\" stroke-width=\"1.3\" style=\"stroke:var(--rose)\"/><path d=\"m39 58 6-1m18 0 6 1\" stroke-width=\"2.3\" style=\"stroke:var(--ink)\"/><path d=\"m52 64 3 2 3-2m-3 3v3m-18-3-13-2m13 7-14 2m50-7 13-2m-13 7 14 2\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--ink)\"/><path d=\"m48 88-1 17m12-17 2 17\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--ink)\"/></g></g>",
+                "black-cat": "<g transform=\"translate(23 0)\"><g stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><path d=\"M53 104C20 110 11 93 24 86c9-5 16 4 10 8\" fill=\"none\"/><path d=\"M39 69c-10 12-12 29-7 35 7 5 35 4 39-2 5-8 0-28-7-36\" style=\"fill:var(--ink)\"/><path d=\"m29 46 2-25 17 12q8-2 16 0l16-14-1 28c8 24-1 34-24 34-22 0-34-12-26-35Z\" style=\"fill:var(--ink)\"/><path d=\"m35 33 2 10 7-4m25-3 6-5-1 12\" fill=\"none\" stroke-width=\"1.3\" style=\"stroke:var(--rose)\"/><path d=\"m39 58 6-1m18 0 6 1\" stroke-width=\"2.3\" style=\"stroke:var(--canvas)\"/><path d=\"m52 64 3 2 3-2m-3 3v3m-18-3-13-2m13 7-14 2m50-7 13-2m-13 7 14 2\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--rose)\"/><path d=\"m48 88-1 17m12-17 2 17\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--lilac)\"/></g></g>",
+                "tux-cat": "<g transform=\"translate(23 0)\"><g stroke-width=\"1.8\" stroke-linejoin=\"round\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><path d=\"M53 104C20 110 11 93 24 86c9-5 16 4 10 8\" fill=\"none\"/><path d=\"M39 69c-10 12-12 29-7 35 7 5 35 4 39-2 5-8 0-28-7-36\" style=\"fill:var(--canvas)\"/><path d=\"M39 69q13-9 25-3l5 27-13 9-8-18-12 8Z\" style=\"fill:var(--ink)\"/><path d=\"m29 46 2-25 17 12q8-2 16 0l16-14-1 28c8 24-1 34-24 34-22 0-34-12-26-35Z\" style=\"fill:var(--canvas)\"/><path d=\"m30 46 1-25 17 12 4 17-9 9Z\" style=\"fill:var(--ink)\"/><path d=\"m64 33 16-14-1 28-13 12-7-9Z\" style=\"fill:var(--ink)\"/><path d=\"m35 33 2 10 7-4m25-3 6-5-1 12\" fill=\"none\" stroke-width=\"1.3\" style=\"stroke:var(--rose)\"/><path d=\"m39 58 6-1m18 0 6 1\" stroke-width=\"2.3\" style=\"stroke:var(--ink)\"/><path d=\"m52 64 3 2 3-2m-3 3v3m-18-3-13-2m13 7-14 2m50-7 13-2m-13 7 14 2\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--ink)\"/><path d=\"m48 88-1 17m12-17 2 17\" fill=\"none\" stroke-width=\"1.2\" style=\"stroke:var(--ink)\"/></g></g>",
+                "lily": "<g fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.4\"><path d=\"M77 112q9-35 1-67m3 44q-26 0-32-20 22 3 32 20m0 12q24-9 28-27-22 7-28 27\" style=\"stroke:var(--olive)\"/><g style=\"stroke:var(--ink);fill:var(--rose)\"><path d=\"M77 48Q54 25 65 8q20 11 12 40Z\"/><path d=\"M77 48Q83 10 105 12q1 27-28 36Z\"/><path d=\"M77 48Q108 22 128 40q-21 22-51 8Z\"/><path d=\"M77 48Q111 48 113 73q-24-1-36-25Z\"/><path d=\"M77 48Q73 83 53 81q-7-23 24-33Z\"/><path d=\"M77 48Q37 65 31 39q25-10 46 9Z\"/></g><path d=\"m77 48-9-19m9 19 13-17M77 48l26-7m-26 7 16 14m-16-14-12 18m12-18-27-2\" style=\"stroke:var(--olive)\"/><g stroke=\"none\" style=\"fill:var(--olive)\"><ellipse cx=\"68\" cy=\"28\" rx=\"2\" ry=\"3\" transform=\"rotate(-20 68 28)\"/><ellipse cx=\"91\" cy=\"30\" rx=\"2\" ry=\"3\" transform=\"rotate(35 91 30)\"/><ellipse cx=\"104\" cy=\"41\" rx=\"3\" ry=\"2\"/></g></g>",
+                "volley": "<g fill=\"none\" stroke-width=\"1.5\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><circle cx=\"77\" cy=\"62\" r=\"39\" style=\"fill:var(--canvas)\"/><path d=\"M77 23q-14 20-9 38l-29 9m29-9q13 12 36 17M68 61q13-19 40-22M50 34q-1 16 7 32M42 45q0 13 5 24m3 21q21 1 36-20m-24 28q18-4 29-25m22-24q-21-5-36 5m39 9q-15-6-29-2\"/></g>",
+                "padel": "<g transform=\"rotate(26 80 60)\" stroke-width=\"1.8\" stroke-linejoin=\"round\" fill=\"none\" style=\"stroke:var(--ink)\"><path d=\"M77 76q-27-5-27-34C50 8 107 8 107 42q0 27-22 34l-2 17H77Z\" style=\"fill:var(--lilac)\"/><path d=\"m77 76 3-10 5 10m-8 17h7l2 23H75Z\" style=\"fill:var(--canvas)\"/><path d=\"m77 100 7 3m-8 3 8 3m-9 3 10 3\"/><circle cx=\"65\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"65\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"65\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/></g>",
+                "nails": "<g stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" style=\"stroke:var(--ink)\"><path d=\"M36 43h28l5 13v42q-17 10-37 0V56Z\" style=\"fill:var(--rose)\"/><path d=\"M39 42V15h22v27Z\" style=\"fill:var(--ink)\"/><path d=\"M42 20v16m5-16v16m5-16v16\" stroke-width=\"1\" style=\"stroke:var(--lilac)\"/><path d=\"M40 67q10-6 21 0v15q-10 5-21 0Z\" style=\"fill:var(--canvas)\"/><path d=\"m45 75 4 3 7-6\"/><path d=\"m88 105-8-21q-6-15 1-17 4-1 10 12L87 43q-2-10 4-10 6 0 7 9l5 22-1-38q0-11 6-11t6 11l1 37 4-32q1-10 7-8 5 1 3 11l-2 34 6-19q3-9 8-6 4 3 1 11l-5 34q-4 13-17 17Z\" style=\"fill:var(--canvas)\"/><path d=\"m89 43 5-1-1-6-4 1Zm16-14h6v-8h-6Zm17 9 5 1 1-9-5-1Zm12 16 4 1 2-7-4-1Z\" style=\"fill:var(--lilac)\"/></g>",
+                "create": "<g stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" style=\"stroke:var(--ink)\"><path d=\"M24 40h78v55H24Z\" style=\"fill:var(--canvas)\"/><path d=\"m22 28 75-13 3 16-75 13Z\" style=\"fill:var(--rose)\"/><path d=\"m32 26 12 14m7-17 12 14m8-17 12 14M25 54h76\"/><path d=\"m55 65 17 10-17 10Z\" style=\"fill:var(--lilac)\"/><path d=\"m107 81 27-43 7 5-27 43-10 6Z\" style=\"fill:var(--lilac)\"/><path d=\"m107 81 7 5m20-48 3-5q3-3 6 0l2 2q3 3 0 6l-4 2m-37 49 4-9\"/><path d=\"M91 107q18-9 26-4t20-2M16 73q-8 0-5 10\" style=\"stroke:var(--olive)\"/></g>",
+                "sports": "<g transform=\"translate(-10 20) scale(.8)\"><g fill=\"none\" stroke-width=\"1.5\" stroke-linecap=\"round\" style=\"stroke:var(--ink)\"><circle cx=\"77\" cy=\"62\" r=\"39\" style=\"fill:var(--canvas)\"/><path d=\"M77 23q-14 20-9 38l-29 9m29-9q13 12 36 17M68 61q13-19 40-22M50 34q-1 16 7 32M42 45q0 13 5 24m3 21q21 1 36-20m-24 28q18-4 29-25m22-24q-21-5-36 5m39 9q-15-6-29-2\"/></g></g><g transform=\"translate(67 -2) scale(.78)\"><g transform=\"rotate(26 80 60)\" stroke-width=\"1.8\" stroke-linejoin=\"round\" fill=\"none\" style=\"stroke:var(--ink)\"><path d=\"M77 76q-27-5-27-34C50 8 107 8 107 42q0 27-22 34l-2 17H77Z\" style=\"fill:var(--lilac)\"/><path d=\"m77 76 3-10 5 10m-8 17h7l2 23H75Z\" style=\"fill:var(--canvas)\"/><path d=\"m77 100 7 3m-8 3 8 3m-9 3 10 3\"/><circle cx=\"65\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"31\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"65\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"42\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"65\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"78\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/><circle cx=\"91\" cy=\"53\" r=\"2\" stroke-width=\"1\" style=\"fill:var(--canvas)\"/></g></g>"
+            };
+            function motifSvg(name, extra) {
+                const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                s.setAttribute('class', 'personal-motif personal-motif--' + name + (extra ? ' ' + extra : ''));
+                s.setAttribute('viewBox', '0 0 160 120');
+                s.setAttribute('fill', 'none');
+                s.setAttribute('aria-hidden', 'true');
+                s.setAttribute('focusable', 'false');
+                s.innerHTML = MOTIFS[name];
+                return s;
+            }
+            $$('svg[data-motif]').forEach((s) => { s.innerHTML = MOTIFS[s.dataset.motif]; });
+
+            /* ---------------------------------------------------------
+               Links · "Tu bóveda de inspiración"
+               - Los enlaces y secciones se guardan en este dispositivo (localStorage).
+               - Todo lo que escribe la usuaria se pinta con textContent (nunca innerHTML)
+                 y solo se aceptan enlaces http/https.
+               --------------------------------------------------------- */
+            const SVG_NS = 'http://www.w3.org/2000/svg';
+            const LINKS_KEY = 'vj-links-v1';
+            const DEFAULT_SECTIONS = ['Uñas', 'Ideas edición', 'Referencias'];
+
+            const linkChips = $('#linkChips');
+            const linkList = $('#linkList');
+            const linkSheet = $('#linkSheet');
+            const linkForm = $('#linkForm');
+            const sectionSheet = $('#sectionSheet');
+            const sectionForm = $('#sectionForm');
+            const confirmSheet = $('#confirmSheet');
+            const lf = { title: $('#lf-title'), url: $('#lf-url'), section: $('#lf-section'), note: $('#lf-note') };
+            const lfErr = $('#lf-url-err');
+            const sfName = $('#sf-name');
+            const sfErr = $('#sf-err');
+
+            let filter = '';          // '' = Todos
+            let editingId = null;     // null = enlace nuevo
+            let storageOk = true;
+            let warnedStorage = false;
+
+            function el(tag, cls, text) {
+                const e = document.createElement(tag);
+                if (cls) e.className = cls;
+                if (text != null) e.textContent = text;
+                return e;
+            }
+            function icon(id, cls) {
+                const s = document.createElementNS(SVG_NS, 'svg');
+                s.setAttribute('class', 'i' + (cls ? ' ' + cls : ''));
+                s.setAttribute('aria-hidden', 'true');
+                const u = document.createElementNS(SVG_NS, 'use');
+                u.setAttribute('href', '#' + id);
+                s.append(u);
+                return s;
+            }
+            const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+                : Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+
+            /* ---------- Datos ---------- */
+            function seed() {
+                const now = Date.now();
+                return {
+                    sections: DEFAULT_SECTIONS.slice(),
+                    links: [
+                        { id: uid(), title: 'Uñas para noviembre', url: 'https://www.pinterest.com/', section: 'Uñas', note: 'Un poquito de inspiración para mi próximo set.', done: false, createdAt: now },
+                        { id: uid(), title: 'Esa transición que quiero probar', url: 'https://www.instagram.com/', section: 'Ideas edición', note: 'Guardar para el próximo reel. Simple, pero con mucho efecto.', done: false, createdAt: now - 1 }
+                    ]
+                };
+            }
+            function load() {
+                try {
+                    const raw = localStorage.getItem(LINKS_KEY);
+                    if (raw) {
+                        const s = JSON.parse(raw);
+                        if (s && Array.isArray(s.sections) && Array.isArray(s.links)) {
+                            const str = (v) => (typeof v === 'string' ? v : '');
+                            return {
+                                sections: s.sections.filter((x) => typeof x === 'string' && x.trim()),
+                                links: s.links.filter((l) => l && typeof l.id === 'string' && typeof l.url === 'string').map((l) => ({
+                                    id: l.id, url: l.url, title: str(l.title) || l.url, section: str(l.section),
+                                    note: str(l.note), done: !!l.done, createdAt: +l.createdAt || 0
+                                }))
+                            };
+                        }
+                    }
+                } catch (_) { storageOk = false; }
+                return seed();
+            }
+            const state = load();
+
+            function save() {
+                try {
+                    localStorage.setItem(LINKS_KEY, JSON.stringify(state));
+                } catch (_) {
+                    storageOk = false;
+                }
+                if (!storageOk && !warnedStorage) {
+                    warnedStorage = true;
+                    toast('Este navegador no deja guardar: tus enlaces durarán solo esta visita.');
+                }
+            }
+            // Si es la primera vez, deja guardados los dos ejemplos del Figma
+            try { if (!localStorage.getItem(LINKS_KEY)) save(); } catch (_) { storageOk = false; }
+
+            /* ---------- Utilidades de enlaces ---------- */
+            function normalizeUrl(raw) {
+                let t = String(raw || '').trim();
+                if (!t) return null;
+                if (!/^[a-z][a-z0-9+.-]*:/i.test(t)) t = 'https://' + t.replace(/^\/+/, '');
+                try {
+                    const u = new URL(t);
+                    if (u.protocol !== 'http:' && u.protocol !== 'https:') return null;
+                    if (!u.hostname.includes('.') && u.hostname !== 'localhost') return null;
+                    return u.href;
+                } catch (_) { return null; }
+            }
+            function domainOf(url) {
+                try { return new URL(url).hostname.replace(/^www\./, ''); } catch (_) { return url; }
+            }
+
+            /* ---------- Contador en Inicio ---------- */
+            function updateHome() {
+                const n = state.links.length;
+                const meta = $('[data-meta="links"]');
+                if (meta) meta.textContent = n === 0 ? 'Tu bóveda te espera' : n === 1 ? '1 tesoro guardado' : n + ' tesoros guardados';
+            }
+
+            /* ---------- Pintar secciones (chips) ---------- */
+            function renderChips() {
+                const make = (label, value) => {
+                    const b = el('button', 'chip', label);
+                    b.type = 'button';
+                    b.dataset.value = value;
+                    b.setAttribute('aria-pressed', String(filter === value));
+                    return b;
+                };
+                linkChips.replaceChildren(make('Todos', ''), ...state.sections.map((s) => make(s, s)));
+            }
+            linkChips.addEventListener('click', (e) => {
+                const b = e.target.closest('.chip');
+                if (!b) return;
+                filter = b.dataset.value;
+                renderChips();
+                renderList(true);
+            });
+
+            /* ---------- Pintar tarjetas ---------- */
+            function setPill(pill, l) {
+                pill.replaceChildren();
+                if (l.done) pill.append(icon('i-check'));
+                pill.append(l.done ? 'Usado' : 'Pendiente');
+                pill.dataset.done = String(l.done);
+                pill.setAttribute('aria-label', 'Estado: ' + (l.done ? 'Usado' : 'Pendiente') + '. Tocar para cambiar');
+            }
+            function actionButton(act, label, iconId) {
+                const b = el('button');
+                b.type = 'button';
+                b.dataset.act = act;
+                b.setAttribute('aria-label', label);
+                b.append(icon(iconId));
+                return b;
+            }
+            function cardEl(l, i) {
+                const li = el('li', 'content-card link-card');
+                li.dataset.id = l.id;
+                li.style.setProperty('--n', Math.min(i, 8));
+
+                const top = el('div', 'link-card-top');
+                const pill = el('button', 'status-pill');
+                pill.type = 'button';
+                pill.dataset.act = 'toggle';
+                setPill(pill, l);
+                top.append(icon('i-link', 'card-icon'), pill);
+
+                const a = el('a', 'link-open');
+                a.href = l.url;
+                a.target = '_blank';
+                a.rel = 'noopener noreferrer';
+                a.append(el('h3', null, l.title), icon('i-arrow'), el('span', 'sr-only', ' (se abre en otra pestaña)'));
+
+                li.append(top, a, el('p', 'link-domain', domainOf(l.url)));
+                if (l.note) li.append(el('p', 'link-note', l.note));
+
+                const foot = el('div', 'link-foot');
+                if (l.section) {
+                    const tag = el('button', 'category', l.section);
+                    tag.type = 'button';
+                    tag.dataset.act = 'tag';
+                    tag.setAttribute('aria-label', 'Ver solo ' + l.section);
+                    foot.append(tag);
+                } else foot.append(el('span'));
+                const acts = el('div', 'link-actions');
+                acts.append(actionButton('edit', 'Editar ' + l.title, 'i-edit'), actionButton('delete', 'Quitar ' + l.title, 'i-trash'));
+                foot.append(acts);
+                li.append(foot);
+                return li;
+            }
+            function emptyEl() {
+                const box = el('div', 'personal-empty');
+                const msg = el('div', 'empty');
+                msg.append(motifSvg('tux-cat'), el('h2', null, 'Un espacio para nuevos hallazgos.'), el('p', null, 'Esta sección está esperando eso que te inspire.'));
+                const row = el('div', 'row');
+                const add = el('button', 'button');
+                add.type = 'button';
+                add.dataset.act = 'add-here';
+                add.append(icon('i-plus'), 'Añadir enlace');
+                row.append(add);
+                if (filter) {
+                    const rm = el('button', 'link-text-btn', 'Quitar esta sección');
+                    rm.type = 'button';
+                    rm.dataset.act = 'remove-section';
+                    row.append(rm);
+                }
+                box.append(msg, row);
+                return box;
+            }
+            function renderList(animate) {
+                const items = state.links.filter((l) => !filter || l.section === filter);
+                if (!items.length) { linkList.replaceChildren(emptyEl()); return; }
+                const grid = el('ul', 'content-grid' + (animate ? ' anim' : ''));
+                grid.setAttribute('role', 'list');
+                items.forEach((l, i) => grid.append(cardEl(l, i)));
+                linkList.replaceChildren(grid);
+            }
+
+            /* ---------- Acciones en las tarjetas ---------- */
+            linkList.addEventListener('click', async (e) => {
+                const btn = e.target.closest('button[data-act]');
+                if (!btn) return;
+                const act = btn.dataset.act;
+
+                if (act === 'add-here') { openLinkForm(null); return; }
+                if (act === 'remove-section') {
+                    const ok = await confirmAsk('¿Quitar la sección «' + filter + '»?', 'No tiene enlaces, así que no se pierde nada.', 'Quitar');
+                    if (!ok) return;
+                    state.sections = state.sections.filter((s) => s !== filter);
+                    filter = '';
+                    save(); renderChips(); renderList(true);
+                    toast('Sección quitada.');
+                    return;
+                }
+
+                const card = btn.closest('.link-card');
+                const link = card && state.links.find((l) => l.id === card.dataset.id);
+                if (!link) return;
+
+                if (act === 'toggle') {
+                    link.done = !link.done;
+                    save(); setPill(btn, link);
+                } else if (act === 'tag') {
+                    filter = link.section;
+                    renderChips(); renderList(true);
+                } else if (act === 'edit') {
+                    openLinkForm(link);
+                } else if (act === 'delete') {
+                    const ok = await confirmAsk('¿Quitar este hallazgo?', '«' + link.title + '» saldrá de tu bóveda.', 'Quitar');
+                    if (!ok) return;
+                    state.links = state.links.filter((l) => l.id !== link.id);
+                    save(); renderList(false); updateHome();
+                    toast('Quitado de tu bóveda.');
+                    $('#addLinkBtn').focus({ preventScroll: true });
+                }
+            });
+
+            /* ---------- Hojas (diálogos) ---------- */
+            document.addEventListener('click', (e) => {
+                const c = e.target.closest('[data-close]');
+                if (c) c.closest('dialog').close();
+            });
+            // Clic en el velo: cierra, salvo que ya haya algo escrito (para no perderlo por un toque sin querer)
+            const isDirty = (dlg) => $$('input,textarea', dlg).some((f) => f.value.trim() && f.dataset.initial !== f.value);
+            [linkSheet, sectionSheet, confirmSheet].forEach((dlg) => {
+                dlg.addEventListener('click', (e) => { if (e.target === dlg && !isDirty(dlg)) dlg.close(); });
+            });
+
+            function confirmAsk(title, text, okLabel) {
+                return new Promise((resolve) => {
+                    $('#confirmTitle').textContent = title;
+                    $('#confirmText').textContent = text;
+                    $('#confirmOk').textContent = okLabel;
+                    confirmSheet.returnValue = '';
+                    confirmSheet.addEventListener('close', () => resolve(confirmSheet.returnValue === 'ok'), { once: true });
+                    confirmSheet.showModal();
+                });
+            }
+
+            /* ---------- Añadir / editar enlace ---------- */
+            function autosize() {
+                lf.note.style.height = 'auto';
+                lf.note.style.height = Math.min(lf.note.scrollHeight + 2, 130) + 'px';
+            }
+            lf.note.addEventListener('input', autosize);
+            lf.title.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); lf.url.focus(); } });
+            lf.url.addEventListener('input', () => { lfErr.hidden = true; lf.url.removeAttribute('aria-invalid'); });
+
+            function fillSections(selected, isEdit) {
+                lf.section.replaceChildren(...state.sections.map((s) => Object.assign(el('option'), { value: s, textContent: s })),
+                    Object.assign(el('option'), { value: '', textContent: 'Sin sección' }));
+                if (state.sections.includes(selected)) lf.section.value = selected;
+                else lf.section.value = isEdit ? '' : (state.sections[0] || '');
+            }
+            function openLinkForm(link) {
+                editingId = link ? link.id : null;
+                const t = $('#linkSheetTitle');
+                t.textContent = link ? 'Ajusta tu tesoro' : 'Un nuevo tesoro';
+                $('#lfSubmit').textContent = link ? 'Guardar cambios' : 'Guardar enlace';
+                lf.title.value = link ? link.title : '';
+                lf.url.value = link ? link.url : '';
+                lf.note.value = link ? link.note : '';
+                fillSections(link ? link.section : filter, !!link);
+                [lf.title, lf.url, lf.note].forEach((f) => { f.dataset.initial = f.value; });
+                lfErr.hidden = true;
+                lf.url.removeAttribute('aria-invalid');
+                linkSheet.showModal();
+                autosize();
+                // En el teléfono no se enfoca solo: el teclado taparía la hoja antes de verla
+                if (!link && window.matchMedia('(hover: hover)').matches) lf.title.focus();
+            }
+            $('#addLinkBtn').addEventListener('click', () => openLinkForm(null));
+
+            linkForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const url = normalizeUrl(lf.url.value);
+                if (!url) {
+                    lfErr.textContent = 'Ese enlace no parece completo. Prueba con algo como pinterest.com/tu-hallazgo';
+                    lfErr.hidden = false;
+                    lf.url.setAttribute('aria-invalid', 'true');
+                    lf.url.focus();
+                    return;
+                }
+                const data = { title: lf.title.value.trim() || domainOf(url), url, section: lf.section.value, note: lf.note.value.trim() };
+                if (editingId) {
+                    const link = state.links.find((l) => l.id === editingId);
+                    if (link) Object.assign(link, data);
+                } else {
+                    state.links.unshift({ id: uid(), done: false, createdAt: Date.now(), ...data });
+                }
+                // Si el enlace queda en otra sección, se muestra esa para que se vea dónde quedó
+                if (filter && data.section !== filter) filter = data.section;
+                save();
+                linkSheet.close();
+                renderChips(); renderList(!editingId); updateHome();
+                toast(editingId ? 'Cambios guardados.' : 'Guardado en tu bóveda.');
+            });
+
+            /* ---------- Nueva sección ---------- */
+            $('#addSectionBtn').addEventListener('click', () => {
+                sfName.value = '';
+                sfName.dataset.initial = '';
+                sfErr.hidden = true;
+                sfName.removeAttribute('aria-invalid');
+                sectionSheet.showModal();
+                if (window.matchMedia('(hover: hover)').matches) sfName.focus();
+            });
+            sfName.addEventListener('input', () => { sfErr.hidden = true; sfName.removeAttribute('aria-invalid'); });
+            sectionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = sfName.value.trim().replace(/\s+/g, ' ');
+                const fail = (msg) => { sfErr.textContent = msg; sfErr.hidden = false; sfName.setAttribute('aria-invalid', 'true'); sfName.focus(); };
+                if (!name || name.toLowerCase() === 'todos' || state.sections.some((s) => s.toLowerCase() === name.toLowerCase())) return fail('Elige un nombre distinto, que no esté vacío ni sea «Todos».');
+                state.sections.push(name);
+                filter = name;
+                save();
+                sectionSheet.close();
+                renderChips(); renderList(true);
+                linkChips.scrollTo({ left: linkChips.scrollWidth, behavior: 'smooth' });
+                toast('Tu nueva sección ya tiene un lugar.');
+            });
+
+            renderChips();
+            renderList(false);
+            updateHome();
+
+            /* ---------------------------------------------------------
+               Ideas · "De idea a plan"
+               - Tablero por estado (Ideas / En proceso / Finalizado), guardado en este dispositivo.
+               - Captura rápida (título + un poquito más) y, al abrir una idea, se puede
+                 afinar: etiqueta, fecha (opcional), moverla de estado o quitarla.
+               - La fecha se guarda como AAAA-MM-DD para que el Calendario pueda leerla después.
+               --------------------------------------------------------- */
+            (() => {
+                const KEY = 'vj-ideas-v1';
+                const STATUSES = ['Ideas', 'En proceso', 'Finalizado'];
+                const MONTHS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+                const tabs = $('#ideaTabs');
+                const list = $('#ideaList');
+                const newSheet = $('#ideaSheet');
+                const newForm = $('#ideaForm');
+                const detailSheet = $('#ideaDetailSheet');
+                const detailForm = $('#ideaDetailForm');
+                const nf = { title: $('#if-title'), desc: $('#if-desc'), err: $('#if-err') };
+                const df = { title: $('#id-title'), tag: $('#id-tag'), desc: $('#id-desc'), date: $('#id-date'), status: $('#id-status'), err: $('#id-err') };
+
+                let current = 'Ideas';     // pestaña visible
+                let openId = null;         // idea abierta en la hoja de detalle
+                let storageOk = true;
+                let warned = false;
+
+                /* ---------- Datos ---------- */
+                function seed() {
+                    const now = Date.now();
+                    return [
+                        { id: uid(), title: 'Un día conmigo, sin filtros', description: 'Los pequeños momentos también merecen un reel. Café, trabajo y un poquito de caos bonito.', status: 'Ideas', tag: 'Lifestyle', date: '', createdAt: now },
+                        { id: uid(), title: 'Lo que nadie te cuenta de crear', description: 'Un carrusel honesto sobre el proceso creativo.', status: 'Ideas', tag: 'Carrusel', date: '2026-11-12', createdAt: now - 1 },
+                        { id: uid(), title: 'Mi ritual antes de grabar', description: 'Preparar el espacio, la luz y las ganas.', status: 'En proceso', tag: 'Reel', date: '2026-11-10', createdAt: now - 2 },
+                        { id: uid(), title: 'Mis favoritos del mes', description: 'Una selección con mucho cariño.', status: 'Finalizado', tag: 'Lifestyle', date: '2026-11-05', createdAt: now - 3 }
+                    ];
+                }
+                function load() {
+                    try {
+                        const raw = localStorage.getItem(KEY);
+                        if (raw) {
+                            const s = JSON.parse(raw);
+                            if (s && Array.isArray(s.ideas)) {
+                                const str = (v) => (typeof v === 'string' ? v : '');
+                                return s.ideas.filter((i) => i && typeof i.id === 'string').map((i) => ({
+                                    id: i.id, title: str(i.title) || 'Una idea', description: str(i.description), tag: str(i.tag),
+                                    status: STATUSES.includes(i.status) ? i.status : 'Ideas',
+                                    date: /^\d{4}-\d{2}-\d{2}$/.test(i.date) ? i.date : '', createdAt: +i.createdAt || 0
+                                }));
+                            }
+                        }
+                    } catch (_) { storageOk = false; }
+                    return seed();
+                }
+                let ideas = load();
+                function save() {
+                    try { localStorage.setItem(KEY, JSON.stringify({ ideas })); } catch (_) { storageOk = false; }
+                    document.dispatchEvent(new CustomEvent('vj:ideas-changed')); // el Calendario se actualiza solo
+                    if (!storageOk && !warned) {
+                        warned = true;
+                        toast('Este navegador no deja guardar: tus ideas durarán solo esta visita.');
+                    }
+                }
+                try { if (!localStorage.getItem(KEY)) save(); } catch (_) { storageOk = false; }
+
+                /* ---------- Utilidades ---------- */
+                function fmtDate(iso) {
+                    if (!iso) return 'Sin fecha';
+                    const [y, m, d] = iso.split('-').map(Number);
+                    return d + ' ' + MONTHS[m - 1] + (y !== new Date().getFullYear() ? ' ' + y : '');
+                }
+                function updateHome() {
+                    const n = ideas.filter((i) => i.status === 'Ideas').length;
+                    const meta = $('[data-meta="ideas"]');
+                    if (meta) meta.textContent = n === 0 ? 'Tu próxima idea te espera' : n === 1 ? '1 idea esperando' : n + ' ideas esperando';
+                }
+                const showErr = (box, input, msg) => { box.textContent = msg; box.hidden = false; if (input) { input.setAttribute('aria-invalid', 'true'); input.focus(); } };
+                const clearErr = (box, ...inputs) => { box.hidden = true; inputs.forEach((i) => i.removeAttribute('aria-invalid')); };
+
+                /* ---------- Pintar ---------- */
+                function renderTabs() {
+                    tabs.replaceChildren(...STATUSES.map((s) => {
+                        const b = el('button', null, s);
+                        b.type = 'button';
+                        b.dataset.status = s;
+                        b.setAttribute('aria-pressed', String(current === s));
+                        b.append(el('span', null, String(ideas.filter((i) => i.status === s).length)));
+                        return b;
+                    }));
+                }
+                function cardEl(idea, n) {
+                    const li = el('li', 'content-card idea-card');
+                    li.style.setProperty('--n', Math.min(n, 8));
+                    const hit = el('button', 'idea-hit');
+                    hit.type = 'button';
+                    hit.dataset.id = idea.id;
+                    hit.setAttribute('aria-haspopup', 'dialog');
+                    if (idea.tag) hit.append(el('span', 'category', idea.tag));
+                    hit.append(el('h3', null, idea.title));
+                    if (idea.description) hit.append(el('p', null, idea.description));
+                    const bottom = el('div', 'row spread card-bottom');
+                    const pill = el('span', 'pill');
+                    pill.append(icon('i-calendar'), fmtDate(idea.date));
+                    bottom.append(pill, icon('i-arrow'));
+                    hit.append(bottom);
+                    li.append(hit);
+                    return li;
+                }
+                function emptyEl() {
+                    const box = el('div', 'empty');
+                    box.append(motifSvg('create'), el('h2', null, 'Aquí hay espacio para una idea.'), el('p', null, 'Sin prisa. Las cosas bonitas llevan su tiempo.'));
+                    return box;
+                }
+                function renderList(animate) {
+                    const items = ideas.filter((i) => i.status === current);
+                    if (!items.length) { list.replaceChildren(emptyEl()); return; }
+                    const grid = el('ul', 'content-grid' + (animate ? ' anim' : ''));
+                    grid.setAttribute('role', 'list');
+                    items.forEach((i, n) => grid.append(cardEl(i, n)));
+                    list.replaceChildren(grid);
+                }
+                function renderAll(animate) { renderTabs(); renderList(animate); updateHome(); }
+
+                tabs.addEventListener('click', (e) => {
+                    const b = e.target.closest('button[data-status]');
+                    if (!b || b.dataset.status === current) return;
+                    current = b.dataset.status;
+                    renderTabs(); renderList(true);
+                });
+
+                /* ---------- Idea nueva (captura rápida) ---------- */
+                $('#addIdeaBtn').addEventListener('click', () => {
+                    nf.title.value = ''; nf.desc.value = '';
+                    nf.title.dataset.initial = ''; nf.desc.dataset.initial = '';
+                    clearErr(nf.err, nf.title);
+                    newSheet.showModal();
+                    if (matchMedia('(hover: hover)').matches) nf.title.focus();
+                });
+                nf.title.addEventListener('input', () => clearErr(nf.err, nf.title));
+                newForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const title = nf.title.value.trim();
+                    if (!title) return showErr(nf.err, nf.title, 'Escribe aunque sea una frase: todo empieza por ahí.');
+                    ideas.unshift({ id: uid(), title, description: nf.desc.value.trim(), status: 'Ideas', tag: 'Nueva idea', date: '', createdAt: Date.now() });
+                    current = 'Ideas';
+                    save();
+                    newSheet.close();
+                    renderAll(true);
+                    toast('Tu idea ya tiene su lugar.');
+                });
+
+                /* ---------- Una idea con posibilidades ---------- */
+                list.addEventListener('click', (e) => {
+                    const hit = e.target.closest('.idea-hit');
+                    if (!hit) return;
+                    const idea = ideas.find((i) => i.id === hit.dataset.id);
+                    if (!idea) return;
+                    openId = idea.id;
+                    df.title.value = idea.title; df.tag.value = idea.tag; df.desc.value = idea.description;
+                    df.date.value = idea.date; df.status.value = idea.status;
+                    [df.title, df.tag, df.desc, df.date].forEach((f) => { f.dataset.initial = f.value; });
+                    clearErr(df.err, df.title);
+                    detailSheet.showModal();
+                });
+                df.title.addEventListener('input', () => clearErr(df.err, df.title));
+                detailForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const idea = ideas.find((i) => i.id === openId);
+                    if (!idea) return detailSheet.close();
+                    const title = df.title.value.trim();
+                    if (!title) return showErr(df.err, df.title, 'Tu idea necesita al menos una frase.');
+                    const moved = df.status.value !== idea.status;
+                    Object.assign(idea, { title, tag: df.tag.value.trim(), description: df.desc.value.trim(), date: df.date.value, status: df.status.value });
+                    if (moved) current = idea.status;      // se muestra la columna donde quedó
+                    save();
+                    detailSheet.close();
+                    renderAll(moved);
+                    toast(moved ? 'Movida a «' + idea.status + '».' : 'Cambios guardados.');
+                });
+                $('#ideaDeleteBtn').addEventListener('click', async () => {
+                    const idea = ideas.find((i) => i.id === openId);
+                    if (!idea) return;
+                    detailSheet.close();
+                    const ok = await confirmAsk('¿Quitar esta idea?', '«' + idea.title + '» saldrá de tu tablero.', 'Quitar');
+                    if (!ok) { detailSheet.showModal(); return; }
+                    ideas = ideas.filter((i) => i.id !== idea.id);
+                    save(); renderAll(false);
+                    toast('Idea quitada.');
+                    $('#addIdeaBtn').focus({ preventScroll: true });
+                });
+
+                // Clic en el velo: cierra salvo que ya haya algo escrito
+                [newSheet, detailSheet].forEach((dlg) => {
+                    dlg.addEventListener('click', (e) => {
+                        const dirty = $$('input,textarea', dlg).some((f) => f.value.trim() && f.dataset.initial !== f.value);
+                        if (e.target === dlg && !dirty) dlg.close();
+                    });
+                });
+
+                /* ---------- Puente con el Calendario ----------
+                   El Calendario LEE las ideas con fecha (no las copia). Así, si cambia el título o la
+                   fecha aquí, cambia allá al instante, y al revés. */
+                window.VJIdeas = {
+                    all: () => ideas.map((i) => ({ ...i })),
+                    update(id, patch) {
+                        const idea = ideas.find((i) => i.id === id);
+                        if (!idea) return false;
+                        if (typeof patch.title === 'string' && patch.title.trim()) idea.title = patch.title.trim().slice(0, 90);
+                        if (typeof patch.date === 'string' && (patch.date === '' || /^\d{4}-\d{2}-\d{2}$/.test(patch.date))) idea.date = patch.date;
+                        save(); renderAll(false);
+                        return true;
+                    },
+                    open(id) {
+                        const idea = ideas.find((i) => i.id === id);
+                        if (!idea) return;
+                        current = idea.status; renderAll(false);
+                        location.hash = '#/ideas';
+                        setTimeout(() => { const hit = list.querySelector('.idea-hit[data-id="' + CSS.escape(id) + '"]'); if (hit) hit.click(); }, 90);
+                    }
+                };
+                renderAll(false);
+            })();
+
+            /* ---------------------------------------------------------
+               Calendario
+               - Eventos propios: se guardan en este dispositivo (vj-events-v1).
+               - El cumpleaños (15 de noviembre) aparece solo, todos los años.
+               - Las ideas con fecha aparecen solas: el Calendario las LEE de Ideas
+                 (VJIdeas), no las copia. Título y fecha son siempre los mismos en ambos lados.
+               --------------------------------------------------------- */
+            (() => {
+                const KEY = 'vj-events-v1';
+                const CATEGORIES = ['Video', 'Plan', 'Cumpleaños', 'Recordatorio'];
+                const CAT_DOT = { Video: 'rose', Plan: 'lilac', Cumpleaños: 'heart', Recordatorio: 'olive' };
+                const VIDEO_TAGS = ['reel', 'carrusel', 'video', 'historia', 'foto', 'lifestyle'];
+                const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+                const TIME_RE = /^\d{2}:\d{2}$/;
+                const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+                const DAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+                const WEEK = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+                const grid = $('#calGrid'), monthTitle = $('#calMonth');
+                const daySheet = $('#daySheet'), dayList = $('#dayList'), dayTitle = $('#dayTitle');
+                const eventSheet = $('#eventSheet'), form = $('#eventForm');
+                const f = { title: $('#ev-title'), date: $('#ev-date'), time: $('#ev-time'), cat: $('#ev-cat'), err: $('#ev-err') };
+                let storageOk = true, warned = false;
+                let manual = load();
+                let month = firstOfMonth(new Date());
+                let selected = todayIso();
+                let editing = null; // null = evento nuevo; si no, el evento que se edita
+
+                /* ---- fechas (siempre locales, sin husos horarios) ---- */
+                function pad(n) { return String(n).padStart(2, '0'); }
+                function iso(y, m0, d) { return y + '-' + pad(m0 + 1) + '-' + pad(d); }
+                function parseIso(t) { const [y, m, d] = t.split('-').map(Number); return new Date(y, m - 1, d); }
+                function todayIso() { const n = new Date(); return iso(n.getFullYear(), n.getMonth(), n.getDate()); }
+                function firstOfMonth(d) { return new Date(d.getFullYear(), d.getMonth(), 1); }
+                function cap(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+                function longDate(t) { const d = parseIso(t); return cap(DAYS[d.getDay()]) + ' ' + d.getDate() + ' de ' + MONTHS[d.getMonth()]; }
+                function fullDate(t) { return longDate(t) + ' de ' + parseIso(t).getFullYear(); }
+                function str(x) { return typeof x === 'string' ? x : ''; }
+
+                /* ---- guardado local ---- */
+                function load() {
+                    try {
+                        const raw = localStorage.getItem(KEY);
+                        if (raw) {
+                            const data = JSON.parse(raw);
+                            if (data && Array.isArray(data.events)) {
+                                return data.events.filter((e) => e && typeof e.id === 'string' && DATE_RE.test(e.date)).map((e) => ({
+                                    id: e.id, title: str(e.title).slice(0, 90) || 'Algo bonito', date: e.date,
+                                    time: TIME_RE.test(e.time) ? e.time : '', category: CATEGORIES.includes(e.category) ? e.category : 'Plan'
+                                }));
+                            }
+                        }
+                    } catch (_) { storageOk = false; }
+                    return [];
+                }
+                function save() {
+                    try { localStorage.setItem(KEY, JSON.stringify({ events: manual })); } catch (_) { storageOk = false; }
+                    if (!storageOk && !warned) { warned = true; toast('No pude guardar en este teléfono: los eventos se perderán al cerrar.'); }
+                }
+
+                /* ---- todos los eventos: propios + ideas con fecha + cumpleaños ---- */
+                function ideaCategory(i) { return VIDEO_TAGS.includes(str(i.tag).trim().toLowerCase()) ? 'Video' : 'Plan'; }
+                function allEvents() {
+                    const list = manual.map((e) => ({ ...e, kind: 'manual', key: 'm:' + e.id }));
+                    const ideas = window.VJIdeas ? window.VJIdeas.all() : [];
+                    ideas.filter((i) => DATE_RE.test(str(i.date))).forEach((i) => {
+                        list.push({ kind: 'idea', key: 'i:' + i.id, ideaId: i.id, title: i.title, date: i.date, time: '', category: ideaCategory(i), status: i.status });
+                    });
+                    return list;
+                }
+                function byTime(a, b) { return (a.kind === 'birthday' ? -1 : b.kind === 'birthday' ? 1 : (a.time || '').localeCompare(b.time || '') || a.title.localeCompare(b.title, 'es')); }
+                function eventsOn(t, source) {
+                    const out = (source || allEvents()).filter((e) => e.date === t);
+                    if (t.slice(5) === '11-15') out.push({ kind: 'birthday', key: 'b:' + t, title: 'El día de Verónika', date: t, time: '', category: 'Cumpleaños' });
+                    return out.sort(byTime);
+                }
+
+                /* ---- cuadrícula del mes ---- */
+                function renderGrid() {
+                    const y = month.getFullYear(), m = month.getMonth();
+                    monthTitle.textContent = cap(MONTHS[m]) + ' de ' + y;
+                    const lead = (new Date(y, m, 1).getDay() + 6) % 7; // la semana empieza el lunes
+                    const total = new Date(y, m + 1, 0).getDate();
+                    const source = allEvents(), today = todayIso();
+                    const nodes = WEEK.map((d) => { const w = el('span', 'weekday', d); w.setAttribute('aria-hidden', 'true'); return w; });
+                    for (let i = 0; i < lead; i++) nodes.push(el('span'));
+                    for (let d = 1; d <= total; d++) {
+                        const t = iso(y, m, d), evs = eventsOn(t, source);
+                        const b = el('button', 'calendar-day'); b.type = 'button'; b.dataset.date = t;
+                        b.setAttribute('aria-haspopup', 'dialog');
+                        if (t === selected) b.classList.add('selected');
+                        if (t === today) { b.classList.add('is-today'); b.setAttribute('aria-current', 'date'); }
+                        b.append(el('span', null, String(d)));
+                        const birthday = evs.some((e) => e.kind === 'birthday');
+                        if (birthday) { b.classList.add('birthday-day'); b.append(icon('i-heart')); }
+                        else if (evs.length) {
+                            const dots = el('span', 'cal-dots');
+                            [...new Set(evs.map((e) => e.category))].slice(0, 3).forEach((c) => dots.append(el('i', 'dot ' + (CAT_DOT[c] === 'heart' ? '' : CAT_DOT[c]))));
+                            b.append(dots);
+                        }
+                        const n = evs.length;
+                        b.setAttribute('aria-label', fullDate(t) + (birthday ? ', cumpleaños de Verónika' : '') + (n && !birthday ? ', ' + n + (n === 1 ? ' evento' : ' eventos') : ''));
+                        nodes.push(b);
+                    }
+                    grid.replaceChildren(...nodes);
+                }
+
+                /* ---- hoja del día ---- */
+                function openDay(t) {
+                    selected = t;
+                    renderGrid();
+                    dayTitle.textContent = longDate(t);
+                    const evs = eventsOn(t);
+                    if (!evs.length) {
+                        const empty = el('div', 'day-empty');
+                        empty.append(icon('i-flower'), el('p', null, 'Un día con espacio para algo bonito.'));
+                        dayList.replaceChildren(empty);
+                    } else {
+                        dayList.replaceChildren(...evs.map((e) => {
+                            const editable = e.kind !== 'birthday';
+                            const row = el(editable ? 'button' : 'div', 'day-event');
+                            if (editable) { row.type = 'button'; row.setAttribute('aria-label', 'Editar: ' + e.title); }
+                            const body = el('div');
+                            body.append(el('small', null, (e.time ? e.time : 'Todo el día') + ' · ' + e.category), el('h3', null, e.title));
+                            if (e.kind === 'idea') body.append(el('p', null, 'De tus ideas' + (e.status ? ' · ' + e.status : '')));
+                            row.append(icon(e.kind === 'birthday' ? 'i-heart' : 'i-calendar'), body);
+                            if (editable) { row.append(icon('i-chevron')); row.addEventListener('click', () => { daySheet.close(); openEvent(e); }); }
+                            return row;
+                        }));
+                    }
+                    daySheet.showModal();
+                }
+                grid.addEventListener('click', (e) => { const b = e.target.closest('.calendar-day'); if (b) openDay(b.dataset.date); });
+                $('#dayAddBtn').addEventListener('click', () => { daySheet.close(); openEvent(null, selected); });
+
+                /* ---- hoja del evento ---- */
+                function setErr(msg, field) {
+                    f.err.textContent = msg || ''; f.err.hidden = !msg;
+                    [f.title, f.date].forEach((x) => x.setAttribute('aria-invalid', x === field && msg ? 'true' : 'false'));
+                    if (msg && field) field.focus();
+                }
+                function openEvent(ev, date) {
+                    editing = ev;
+                    setErr('');
+                    const isIdea = !!ev && ev.kind === 'idea';
+                    $('#eventSheetTitle').textContent = ev ? 'Tu evento' : 'Algo bonito en tu calendario';
+                    f.title.value = ev ? ev.title : '';
+                    f.date.value = ev ? ev.date : (date || selected);
+                    f.time.value = ev ? ev.time : '';
+                    f.cat.value = ev ? ev.category : 'Video';
+                    $('#ev-link').hidden = !isIdea;
+                    $('#ev-time-field').hidden = isIdea;
+                    $('#ev-cat-field').hidden = isIdea;
+                    $('#evDeleteBtn').hidden = !ev;
+                    $('#evDeleteBtn').textContent = isIdea ? 'Quitar del calendario' : 'Quitar evento';
+                    $('#evSubmit').firstChild.textContent = ev ? 'Guardar cambios ' : 'Confirmar evento ';
+                    eventSheet.showModal();
+                }
+                $('#addEventBtn').addEventListener('click', () => openEvent(null, selected));
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const title = f.title.value.trim(), date = f.date.value;
+                    if (!title) return setErr('Escribe qué vamos a hacer.', f.title);
+                    if (!DATE_RE.test(date)) return setErr('Elige el día para tu evento.', f.date);
+                    if (editing && editing.kind === 'idea') {
+                        window.VJIdeas.update(editing.ideaId, { title, date });
+                    } else if (editing) {
+                        const target = manual.find((x) => 'm:' + x.id === editing.key);
+                        if (target) Object.assign(target, { title, date, time: f.time.value, category: f.cat.value });
+                        save();
+                    } else {
+                        manual.push({ id: uid(), title, date, time: f.time.value, category: f.cat.value });
+                        save();
+                    }
+                    selected = date; month = firstOfMonth(parseIso(date));
+                    eventSheet.close();
+                    renderGrid();
+                    toast(editing ? 'Listo, tu evento quedó actualizado.' : 'Evento añadido a tu calendario.');
+                });
+                [f.title, f.date].forEach((x) => x.addEventListener('input', () => { if (!f.err.hidden) setErr(''); }));
+
+                $('#evDeleteBtn').addEventListener('click', async () => {
+                    if (!editing) return;
+                    const ev = editing, isIdea = ev.kind === 'idea';
+                    eventSheet.close();
+                    const ok = await confirmAsk(
+                        isIdea ? '¿Quitar del calendario?' : '¿Quitar este evento?',
+                        isIdea ? 'La idea «' + ev.title + '» se queda en tu tablero, solo sin fecha.' : '«' + ev.title + '» saldrá de tu calendario.',
+                        isIdea ? 'Quitar fecha' : 'Quitar'
+                    );
+                    if (!ok) { eventSheet.showModal(); return; }
+                    if (isIdea) window.VJIdeas.update(ev.ideaId, { date: '' });
+                    else { manual = manual.filter((x) => 'm:' + x.id !== ev.key); save(); }
+                    renderGrid();
+                    toast('Listo, lo quité de tu calendario.');
+                });
+                $('#evOpenIdea').addEventListener('click', () => { const id = editing && editing.ideaId; eventSheet.close(); if (id) window.VJIdeas.open(id); });
+
+                /* ---- navegación del mes ---- */
+                $('#calPrev').addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() - 1, 1); renderGrid(); });
+                $('#calNext').addEventListener('click', () => { month = new Date(month.getFullYear(), month.getMonth() + 1, 1); renderGrid(); });
+                $('#calToday').addEventListener('click', () => { month = firstOfMonth(new Date()); selected = todayIso(); renderGrid(); });
+
+                /* ---- se mantiene al día ---- */
+                document.addEventListener('vj:ideas-changed', renderGrid);
+                window.addEventListener('hashchange', () => { if (currentPage() === 'calendario') renderGrid(); });
+                document.addEventListener('visibilitychange', () => { if (!document.hidden) renderGrid(); });
+                renderGrid();
+            })();
             /* ---------- Arranque ---------- */
             render();
             start();

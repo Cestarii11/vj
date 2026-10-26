@@ -5,11 +5,13 @@
  * - Cuando cambies cualquier archivo de la app, sube el número de VERSION
  *   (vj-v2, vj-v3…) para que los teléfonos descarguen la versión nueva.
  */
-const VERSION = 'vj-v1';
+const VERSION = 'vj-v3';
 const SHELL = [
     './',
     './index.html',
     './manifest.json',
+    './lib/crypto.js',
+    './data/carta.enc.json',
     './img/logo.jpg',
     './icons/icon-192.png',
     './icons/icon-512.png',
