@@ -11858,7 +11858,7 @@
             (() => {
                 // Opcional: una clave de Gemini RESTRINGIDA al sitio (https://cestarii11.github.io/*) para que Karla venga ya conectada.
                 const KARLA_DEFAULT_KEY = '';
-                const KARLA_MODEL = 'gemini-flash-latest';
+                const KARLA_MODELS = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.5-flash-lite']; // se prueban en orden si uno falla
                 const SETTINGS_KEY = 'vj-karla-v1';
                 const CHAT_KEY = 'vj-karla-chat-v1';
                 const ENDPOINT = (model) => 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent';
@@ -12046,12 +12046,26 @@
                 }
                 async function postGemini(key, body) {
                     if (!key) throw new KarlaError('nokey');
+                    // Errores que no mejoran cambiando de modelo: no se reintenta
+                    const STOP = ['nokey', 'badkey', 'forbidden', 'offline', 'blocked'];
+                    let last = null;
+                    for (const model of KARLA_MODELS) {
+                        try { return await callGemini(model, key, body); }
+                        catch (e) {
+                            if (!(e instanceof KarlaError) || STOP.includes(e.code)) throw e;
+                            last = e; // saturado, cuota o error temporal: probamos el siguiente modelo
+                        }
+                    }
+                    throw last || new KarlaError('bad');
+                }
+                async function callGemini(model, key, body) {
+                    if (!key) throw new KarlaError('nokey');
                     if (navigator.onLine === false) throw new KarlaError('offline');
                     const ctrl = new AbortController();
                     const timer = setTimeout(() => ctrl.abort(), 45000);
                     let res;
                     try {
-                        res = await fetch(ENDPOINT(KARLA_MODEL), { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body), signal: ctrl.signal });
+                        res = await fetch(ENDPOINT(model), { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body), signal: ctrl.signal });
                     } catch (e) { throw new KarlaError(e && e.name === 'AbortError' ? 'timeout' : 'network'); } finally { clearTimeout(timer); }
                     let data = null;
                     try { data = await res.json(); } catch (_) { /* sin cuerpo */ }
