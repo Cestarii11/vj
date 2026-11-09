@@ -3,16 +3,21 @@
  * - Solo gestiona archivos del propio sitio y las tipografías de Google Fonts.
  *   Todo lo demás (Firebase, Gemini, etc.) pasa directo a la red y NUNCA se guarda aquí.
  * - Cuando cambies cualquier archivo de la app, sube el número de VERSION
- *   (vj-v2, vj-v3…) para que los teléfonos descarguen la versión nueva.
+ *   (vj-v6, vj-v7…) para que los teléfonos descarguen la versión nueva.
  */
-const VERSION = 'vj-v3';
+const VERSION = 'vj-v5';
 const SHELL = [
     './',
     './index.html',
     './manifest.json',
     './lib/crypto.js',
+    './lib/firebase-config.js',
+    './lib/vj-cloud.js',
     './data/carta.enc.json',
     './img/logo.jpg',
+    './img/supervisor.jpg',
+    './img/login-veronika.jpg',
+    './img/login-pareja.jpg',
     './icons/icon-192.png',
     './icons/icon-512.png',
     './icons/apple-touch-icon.png'
@@ -20,7 +25,8 @@ const SHELL = [
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', (event) => {
-    event.waitUntil(caches.open(VERSION).then((cache) => cache.addAll(SHELL)));
+    // Si un archivo todavía no está subido, la instalación no se cae: se guarda lo que sí exista
+    event.waitUntil(caches.open(VERSION).then((cache) => Promise.allSettled(SHELL.map((u) => cache.add(u)))));
     self.skipWaiting();
 });
 
@@ -38,7 +44,7 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(req.url);
     const sameOrigin = url.origin === self.location.origin;
-    if (!sameOrigin && !FONT_HOSTS.includes(url.hostname)) return; // red directa
+    if (!sameOrigin && !FONT_HOSTS.includes(url.hostname)) return; // red directa (Firebase, Gemini…)
 
     // Stale-while-revalidate: responde con lo guardado y actualiza en segundo plano.
     event.respondWith(

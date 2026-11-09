@@ -1,0 +1,7 @@
+@"
+# Respaldos y herramientas locales
+index-cartaaaa.html
+index-anterior.html
+tools/
+*.bak
+"@ | Set-Content -Encoding ascii .gitignore
