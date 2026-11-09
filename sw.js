@@ -5,7 +5,7 @@
  * - Cuando cambies cualquier archivo de la app, sube el número de VERSION
  *   (vj-v6, vj-v7…) para que los teléfonos descarguen la versión nueva.
  */
-const VERSION = 'vj-v5';
+const VERSION = 'vj-v6';
 const SHELL = [
     './',
     './index.html',
